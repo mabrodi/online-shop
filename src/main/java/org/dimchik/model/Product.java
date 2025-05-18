@@ -1,6 +1,7 @@
 package org.dimchik.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Product {
     private long id;
@@ -34,6 +35,10 @@ public class Product {
 
     public LocalDateTime getCreationDate() {
         return creationDate;
+    }
+
+    public String getCreationDateFormatted() {
+        return creationDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
     }
 
     public void setCreationDate(LocalDateTime creationDate) {
