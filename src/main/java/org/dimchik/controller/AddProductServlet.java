@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.dimchik.service.ProductService;
+import org.dimchik.util.ServletUtil;
 import org.dimchik.util.TemplateEngine;
 
 import java.io.IOException;
@@ -25,24 +26,22 @@ public class AddProductServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Map<String, Object> data = new HashMap<>();
-        String html = templateEngine.processTemplate("productFormCreate.html", data);
-        resp.getWriter().write(html);
-
-        resp.setContentType("text/html;charset=utf-8");
-        resp.setStatus(HttpServletResponse.SC_OK);
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String html = templateEngine.processTemplate("productFormCreate.html", new HashMap<>());
+        ServletUtil.renderHtml(resp, html);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String name = req.getParameter("name");
-        double price = Double.parseDouble(req.getParameter("price"));
+        try {
+            String name = req.getParameter("name");
+            double price = Double.parseDouble(req.getParameter("price"));
 
-        productService.addProduct(name, price);
+            productService.addProduct(name, price);
+            resp.sendRedirect("/products");
 
-        resp.sendRedirect("/products");
+        } catch (IllegalArgumentException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid input: " + e.getMessage());
+        }
     }
-
-
 }

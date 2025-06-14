@@ -5,6 +5,7 @@ import org.dimchik.service.ProductService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.dimchik.util.ServletUtil;
 import org.dimchik.util.TemplateEngine;
 
 import java.io.IOException;
@@ -30,10 +31,6 @@ public class ProductServlet extends HttpServlet {
         data.put("products", productService.getAllProducts());
 
         String html = templateEngine.processTemplate("products.html", data);
-        resp.getWriter().write(html);
-
-        resp.setContentType("text/html;charset=utf-8");
-        resp.setCharacterEncoding("UTF-8");
-        resp.setStatus(HttpServletResponse.SC_OK);
+        ServletUtil.renderHtml(resp, html);
     }
 }

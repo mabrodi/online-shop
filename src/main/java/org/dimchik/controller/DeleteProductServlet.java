@@ -22,9 +22,13 @@ public class DeleteProductServlet extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        long id = Long.parseLong(req.getPathInfo().substring(1));
-        productService.deleteProduct(id);
+        try {
+            long id = Long.parseLong(req.getPathInfo().substring(1));
+            productService.deleteProduct(id);
 
-        resp.setStatus(HttpServletResponse.SC_OK);
+            resp.setStatus(HttpServletResponse.SC_OK);
+        } catch (IllegalArgumentException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid ID");
+        }
     }
 }
