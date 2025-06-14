@@ -2,12 +2,15 @@ package org.dimchik.service;
 
 import org.dimchik.dao.ProductDao;
 import org.dimchik.model.Product;
+import org.dimchik.service.validation.ProductValidator;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class ProductService implements IProductService{
+import static org.dimchik.service.validation.ProductValidator.*;
+
+public class ProductService implements IProductService {
     private final ProductDao productDao;
 
     public ProductService() {
@@ -25,6 +28,8 @@ public class ProductService implements IProductService{
 
     @Override
     public void addProduct(String name, double price) {
+        validateForCreate(name, price);
+
         Product product = new Product();
         product.setName(name);
         product.setPrice(price);
@@ -35,11 +40,15 @@ public class ProductService implements IProductService{
 
     @Override
     public Product getProductById(Long id) {
+        validateId(id);
+
         return productDao.findById(id);
     }
 
     @Override
     public void updateProduct(long id, String name, double price) {
+        validateForUpdate(id, name, price);
+
         Product product = new Product();
         product.setId(id);
         product.setName(name);
@@ -50,6 +59,8 @@ public class ProductService implements IProductService{
 
     @Override
     public void deleteProduct(Long id) {
+        validateId(id);
+
         productDao.delete(id);
     }
 }
