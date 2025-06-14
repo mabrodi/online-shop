@@ -10,8 +10,14 @@ import java.util.List;
 public class ProductDao implements IProductDao {
     private final DbUtil dbUtil;
 
+    private static final String SELECT_ALL = "SELECT * FROM products";
+    private static final String SELECT_BY_ID = "SELECT * FROM products WHERE id = ?";
+    private static final String INSERT = "INSERT INTO products (name, price, creation_date) VALUES (?, ?, ?)";
+    private static final String UPDATE = "UPDATE products SET name = ?, price = ? WHERE id = ?";
+    private static final String DELETE = "DELETE FROM products WHERE id = ?";
+
     public ProductDao() {
-        this(new DbUtil());
+        this(DbUtil.getInstance());
     }
 
     public ProductDao(DbUtil dbUtil) {
@@ -21,11 +27,10 @@ public class ProductDao implements IProductDao {
     @Override
     public List<Product> findAll() {
         List<Product> products = new ArrayList<>();
-        String sql = "SELECT * FROM products";
 
         try (Connection conn = dbUtil.getConnection();
              Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+             ResultSet rs = stmt.executeQuery(SELECT_ALL)) {
 
             while (rs.next()) {
                 products.add(mapRow(rs));
@@ -39,11 +44,10 @@ public class ProductDao implements IProductDao {
 
     @Override
     public Product findById(Long id) {
-        String sql = "SELECT * FROM products WHERE id = ? order by products.id desc";
         Product product = null;
 
         try (Connection conn = dbUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(SELECT_BY_ID)) {
 
             stmt.setLong(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -60,10 +64,8 @@ public class ProductDao implements IProductDao {
 
     @Override
     public void save(Product product) {
-        String sql = "INSERT INTO products (name, price, creation_date) VALUES (?, ?, ?)";
-
         try (Connection conn = dbUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement stmt = conn.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, product.getName());
             stmt.setDouble(2, product.getPrice());
@@ -83,10 +85,8 @@ public class ProductDao implements IProductDao {
 
     @Override
     public void update(Product product) {
-        String sql = "UPDATE products SET name = ?, price = ? WHERE id = ?";
-
         try (Connection conn = dbUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(UPDATE)) {
 
             stmt.setString(1, product.getName());
             stmt.setDouble(2, product.getPrice());
@@ -100,10 +100,8 @@ public class ProductDao implements IProductDao {
 
     @Override
     public void delete(Long id) {
-        String sql = "DELETE FROM products WHERE id = ?";
-
         try (Connection conn = dbUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(DELETE)) {
 
             stmt.setLong(1, id);
             stmt.executeUpdate();
@@ -118,7 +116,6 @@ public class ProductDao implements IProductDao {
         product.setName(rs.getString("name"));
         product.setPrice(rs.getDouble("price"));
         product.setCreationDate(rs.getTimestamp("creation_date").toLocalDateTime());
-
         return product;
     }
 }
