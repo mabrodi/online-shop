@@ -23,7 +23,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void getAllProductsReturnsProductsFromDao() {
+    public void getAllProductsReturnsProductsFromDao() {
         Product product = new Product();
         product.setId(1L);
         product.setName("Test Product");
@@ -39,7 +39,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void addProductPassesCorrectProductToDao() {
+    public void addProductPassesCorrectProductToDao() {
         productService.addProduct("Phone", 500.0);
 
         ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
@@ -51,7 +51,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void getProductByIdReturnsProduct() {
+    public void getProductByIdReturnsProduct() {
         Product product = new Product();
         product.setId(2L);
         product.setName("Laptop");
@@ -63,7 +63,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void updateProductCallsDaoUpdate() {
+    public void updateProductCallsDaoUpdate() {
         productService.updateProduct(3L, "Monitor", 200.0);
 
         ArgumentCaptor<Product> captor = ArgumentCaptor.forClass(Product.class);
@@ -75,7 +75,7 @@ class ProductServiceTest {
     }
 
     @Test
-    void deleteProductCallsDaoDelete() {
+    public void deleteProductCallsDaoDelete() {
         productService.deleteProduct(4L);
         verify(productDao).delete(4L);
     }

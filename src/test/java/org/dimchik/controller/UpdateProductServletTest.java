@@ -24,13 +24,13 @@ class UpdateProductServletTest {
     UpdateProductServlet servlet;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
         servlet = new UpdateProductServlet(productService, templateEngine);
     }
 
     @Test
-    void doGetRendersUpdateForm() throws Exception {
+    public void doGetRendersUpdateForm() throws Exception {
         when(request.getPathInfo()).thenReturn("/8");
         Product product = new Product();
         when(productService.getProductById(8L)).thenReturn(product);
@@ -46,7 +46,7 @@ class UpdateProductServletTest {
     }
 
     @Test
-    void doPutUpdatesProductAndReturnsOk() throws Exception {
+    public void doPutUpdatesProductAndReturnsOk() throws Exception {
         when(request.getPathInfo()).thenReturn("/5");
         when(request.getParameter("name")).thenReturn("UpdatedName");
         when(request.getParameter("price")).thenReturn("800.0");
@@ -55,5 +55,16 @@ class UpdateProductServletTest {
 
         verify(productService).updateProduct(5L, "UpdatedName", 800.0);
         verify(response).setStatus(HttpServletResponse.SC_OK);
+    }
+
+    @Test
+    public void doPutHandlesInvalidInput() throws Exception {
+        when(request.getPathInfo()).thenReturn("/5");
+        when(request.getParameter("name")).thenReturn("TV");
+        when(request.getParameter("price")).thenReturn("not-a-number");
+
+        servlet.doPut(request, response);
+
+        verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), contains("Invalid input"));
     }
 }

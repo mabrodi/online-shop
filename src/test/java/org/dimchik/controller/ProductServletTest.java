@@ -15,25 +15,21 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProductServletTest {
-    @Mock
-    ProductService productService;
-    @Mock
-    TemplateEngine templateEngine;
-    @Mock
-    HttpServletRequest request;
-    @Mock
-    HttpServletResponse response;
+    @Mock ProductService productService;
+    @Mock TemplateEngine templateEngine;
+    @Mock HttpServletRequest request;
+    @Mock HttpServletResponse response;
 
     ProductServlet productServlet;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
         productServlet = new ProductServlet(productService, templateEngine);
     }
 
     @Test
-    void doGetWritesHtml() throws Exception {
+    public void doGetWritesHtml() throws Exception {
         StringWriter sw = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(sw));
         when(templateEngine.processTemplate(anyString(), anyMap())).thenReturn("HTML");
@@ -41,6 +37,8 @@ class ProductServletTest {
         productServlet.doGet(request, response);
 
         verify(templateEngine).processTemplate(eq("products.html"), anyMap());
+        verify(response).setContentType("text/html;charset=utf-8");
+        verify(response).setStatus(HttpServletResponse.SC_OK);
         assertTrue(sw.toString().contains("HTML"));
     }
 }

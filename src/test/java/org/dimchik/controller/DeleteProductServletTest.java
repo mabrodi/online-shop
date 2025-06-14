@@ -18,18 +18,27 @@ class DeleteProductServletTest {
     DeleteProductServlet servlet;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
         servlet = new DeleteProductServlet(productService);
     }
 
     @Test
-    void doDeleteDeletesProductAndReturnsOk() throws Exception {
+    public void doDeleteDeletesProductAndReturnsOk() throws Exception {
         when(request.getPathInfo()).thenReturn("/12");
 
         servlet.doDelete(request, response);
 
         verify(productService).deleteProduct(12L);
         verify(response).setStatus(HttpServletResponse.SC_OK);
+    }
+
+    @Test
+    public void doDeleteHandlesInvalidId() throws Exception {
+        when(request.getPathInfo()).thenReturn("/not-a-number");
+
+        servlet.doDelete(request, response);
+
+        verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), contains("Invalid ID"));
     }
 }

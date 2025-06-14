@@ -23,13 +23,13 @@ class AddProductServletTest {
     AddProductServlet servlet;
 
     @BeforeEach
-    void setUp() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
         servlet = new AddProductServlet(productService, templateEngine);
     }
 
     @Test
-    void doGetWritesCreateForm() throws Exception {
+    public void doGetWritesCreateForm() throws Exception {
         StringWriter sw = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(sw));
         when(templateEngine.processTemplate(anyString(), anyMap())).thenReturn("FORM");
@@ -37,11 +37,13 @@ class AddProductServletTest {
         servlet.doGet(request, response);
 
         verify(templateEngine).processTemplate(eq("productFormCreate.html"), anyMap());
+        verify(response).setContentType("text/html;charset=utf-8");
+        verify(response).setStatus(HttpServletResponse.SC_OK);
         assertTrue(sw.toString().contains("FORM"));
     }
 
     @Test
-    void doPostAddsProductAndRedirects() throws Exception {
+    public void doPostAddsProductAndRedirects() throws Exception {
         when(request.getParameter("name")).thenReturn("TestName");
         when(request.getParameter("price")).thenReturn("150.0");
 
@@ -49,5 +51,15 @@ class AddProductServletTest {
 
         verify(productService).addProduct("TestName", 150.0);
         verify(response).sendRedirect("/products");
+    }
+
+    @Test
+    public void doPostHandlesInvalidPriceGracefully() throws Exception {
+        when(request.getParameter("name")).thenReturn("TestName");
+        when(request.getParameter("price")).thenReturn("invalid");
+
+        servlet.doPost(request, response);
+
+        verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), contains("Invalid input"));
     }
 }

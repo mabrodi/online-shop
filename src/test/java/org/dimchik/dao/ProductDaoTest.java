@@ -23,18 +23,18 @@ class ProductDaoTest {
     ProductDao productDao;
 
     @BeforeEach
-    void setUp() throws Exception {
+    public void setUp() throws Exception {
         MockitoAnnotations.openMocks(this);
         productDao = new ProductDao(dbUtil);
     }
 
     @Test
-    void findAllReturnsProducts() throws Exception {
+    public void findAllReturnsProducts() throws Exception {
         when(dbUtil.getConnection()).thenReturn(connection);
         when(connection.createStatement()).thenReturn(statement);
         when(statement.executeQuery(anyString())).thenReturn(resultSet);
 
-        when(resultSet.next()).thenReturn(true, false); // 1 продукт, потом конец
+        when(resultSet.next()).thenReturn(true, false);
         when(resultSet.getLong("id")).thenReturn(1L);
         when(resultSet.getString("name")).thenReturn("Product1");
         when(resultSet.getDouble("price")).thenReturn(123.45);
@@ -54,7 +54,7 @@ class ProductDaoTest {
     }
 
     @Test
-    void findByIdReturnsProduct() throws Exception {
+    public void findByIdReturnsProduct() throws Exception {
         when(dbUtil.getConnection()).thenReturn(connection);
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
@@ -75,7 +75,7 @@ class ProductDaoTest {
     }
 
     @Test
-    void saveInsertsProduct() throws Exception {
+    public void saveInsertsProduct() throws Exception {
         Product product = new Product();
         product.setName("SavedProduct");
         product.setPrice(123.0);
@@ -100,7 +100,7 @@ class ProductDaoTest {
     }
 
     @Test
-    void updateProduct() throws Exception {
+    public void updateProduct() throws Exception {
         Product product = new Product();
         product.setId(10L);
         product.setName("UpdatedProduct");
@@ -118,7 +118,7 @@ class ProductDaoTest {
     }
 
     @Test
-    void deleteProduct() throws Exception {
+    public void deleteProduct() throws Exception {
         when(dbUtil.getConnection()).thenReturn(connection);
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
 
