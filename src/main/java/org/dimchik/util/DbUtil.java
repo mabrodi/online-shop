@@ -8,11 +8,13 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DbUtil {
+    private static final DbUtil INSTANCE = new DbUtil();
+
     private final String dbUrl;
     private final String dbUser;
     private final String dbPassword;
 
-    public DbUtil() {
+    private DbUtil() {
         Properties prop = new Properties();
         try (InputStream input = getClass().getClassLoader().getResourceAsStream("db.properties")) {
             if (input == null) {
@@ -21,18 +23,17 @@ public class DbUtil {
 
             prop.load(input);
 
-            String driver = prop.getProperty("db.driver");
-            if (driver != null && !driver.isEmpty()) {
-                Class.forName(driver);
-            }
-
             dbUrl = prop.getProperty("db.url");
             dbUser = prop.getProperty("db.username");
             dbPassword = prop.getProperty("db.password");
 
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             throw new RuntimeException("Failed to load DB config", e);
         }
+    }
+
+    public static DbUtil getInstance() {
+        return INSTANCE;
     }
 
     public Connection getConnection() throws SQLException {
