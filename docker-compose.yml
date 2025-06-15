@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: online_shop_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: online-shop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "55432:5432"
+    networks:
+      - myshop_network
+
+  app:
+    build: .
+    container_name: online_shop_app
+    depends_on:
+      - db
+    ports:
+      - "7080:7080"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: online-shop
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    networks:
+      - myshop_network
+
+volumes:
+  pgdata_myshop:
+
+networks:
+  myshop_network:
