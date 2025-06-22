@@ -13,10 +13,6 @@ import static org.dimchik.service.validation.ProductValidator.*;
 public class ProductService implements IProductService {
     private final ProductDao productDao;
 
-    public ProductService() {
-        this(new ProductDao());
-    }
-
     public ProductService(ProductDao productDao) {
         this.productDao = productDao;
     }

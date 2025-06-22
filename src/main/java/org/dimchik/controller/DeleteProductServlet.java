@@ -12,10 +12,6 @@ import java.io.IOException;
 public class DeleteProductServlet extends HttpServlet {
     private final ProductService productService;
 
-    public DeleteProductServlet() {
-        this(new ProductService());
-    }
-
     public DeleteProductServlet(ProductService productService) {
         this.productService = productService;
     }

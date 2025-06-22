@@ -16,10 +16,6 @@ public class ProductDao implements IProductDao {
     private static final String UPDATE = "UPDATE products SET name = ?, price = ? WHERE id = ?";
     private static final String DELETE = "DELETE FROM products WHERE id = ?";
 
-    public ProductDao() {
-        this(DbUtil.getInstance());
-    }
-
     public ProductDao(DbUtil dbUtil) {
         this.dbUtil = dbUtil;
     }

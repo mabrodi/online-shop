@@ -16,10 +16,6 @@ public class AddProductServlet extends HttpServlet {
     private final ProductService productService;
     private final TemplateEngine templateEngine;
 
-    public AddProductServlet() {
-        this(new ProductService(), new TemplateEngine());
-    }
-
     public AddProductServlet(ProductService productService, TemplateEngine templateEngine) {
         this.productService = productService;
         this.templateEngine = templateEngine;
