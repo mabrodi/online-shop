@@ -23,8 +23,15 @@ public class ProductServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String search = req.getParameter("search");
         Map<String, Object> data = new HashMap<>();
-        data.put("products", productService.getAllProducts());
+
+        if (search != null && !search.isBlank()) {
+            data.put("products", productService.searchProducts(search));
+            data.put("query", search);
+        } else {
+            data.put("products", productService.getAllProducts());
+        }
 
         String html = templateEngine.processTemplate("products.html", data);
         ServletUtil.renderHtml(resp, html);

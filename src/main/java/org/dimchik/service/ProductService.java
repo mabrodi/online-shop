@@ -2,9 +2,7 @@ package org.dimchik.service;
 
 import org.dimchik.dao.ProductDao;
 import org.dimchik.model.Product;
-import org.dimchik.service.validation.ProductValidator;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,6 +18,15 @@ public class ProductService implements IProductService {
     @Override
     public List<Product> getAllProducts() {
         return productDao.findAll();
+    }
+
+    @Override
+    public List<Product> searchProducts(String query) {
+        if (query == null || query.isBlank()) {
+            return getAllProducts();
+        }
+
+        return productDao.findBySearch(query);
     }
 
     @Override

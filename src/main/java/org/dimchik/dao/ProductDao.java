@@ -11,6 +11,7 @@ public class ProductDao implements IProductDao {
     private final DbUtil dbUtil;
 
     private static final String SELECT_ALL = "SELECT * FROM products";
+    private static final String SEARCH = "SELECT * FROM products WHERE name ILIKE ?";
     private static final String SELECT_BY_ID = "SELECT * FROM products WHERE id = ?";
     private static final String INSERT = "INSERT INTO products (name, price, creation_date) VALUES (?, ?, ?)";
     private static final String UPDATE = "UPDATE products SET name = ?, price = ? WHERE id = ?";
@@ -33,6 +34,26 @@ public class ProductDao implements IProductDao {
             }
         } catch (SQLException e) {
             throw new RuntimeException("Database query failed", e);
+        }
+
+        return products;
+    }
+
+    @Override
+    public List<Product> findBySearch(String search) {
+        List<Product> products = new ArrayList<>();
+
+        try (Connection conn = dbUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SEARCH)) {
+
+            stmt.setString(1, "%" + search + "%");
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    products.add(mapRow(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Database query failed by search = " + search, e);
         }
 
         return products;

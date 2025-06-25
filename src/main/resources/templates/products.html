@@ -22,6 +22,17 @@
         <a href="/products/add" class="btn btn-success">Add product</a>
     </div>
 
+    <form method="get" action="/products">
+        <div class="row mb-4 g-3 align-items-center">
+            <div class="col-auto">
+                <input type="text" class="form-control" name="search" placeholder="Search..." value="${query!}">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </form>
+
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <#list products as product>
             <div class="col">
