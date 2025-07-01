@@ -1,4 +1,4 @@
-package org.dimchik.controller;
+package org.dimchik.servlet;
 
 import org.dimchik.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;

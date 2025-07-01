@@ -1,4 +1,4 @@
-package org.dimchik.controller;
+package org.dimchik.servlet;
 
 import org.dimchik.service.ProductService;
 
@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.dimchik.util.ServletUtil;
+import org.dimchik.util.SessionUtil;
 import org.dimchik.util.TemplateEngine;
 
 import java.io.IOException;
@@ -25,6 +26,8 @@ public class ProductServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String search = req.getParameter("search");
         Map<String, Object> data = new HashMap<>();
+
+        data.put("currentUser", SessionUtil.getCurrentUser(req));
 
         if (search != null && !search.isBlank()) {
             data.put("products", productService.searchProducts(search));

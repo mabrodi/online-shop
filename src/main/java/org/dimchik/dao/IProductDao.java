@@ -1,6 +1,6 @@
 package org.dimchik.dao;
 
-import org.dimchik.model.Product;
+import org.dimchik.entity.Product;
 
 import java.util.List;
 

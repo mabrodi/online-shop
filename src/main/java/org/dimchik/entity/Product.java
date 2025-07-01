@@ -1,4 +1,4 @@
-package org.dimchik.model;
+package org.dimchik.entity;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -7,6 +7,7 @@ public class Product {
     private long id;
     private String name;
     private double price;
+    private String description;
     private LocalDateTime creationDate;
 
     public long getId() {
@@ -31,6 +32,14 @@ public class Product {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocalDateTime getCreationDate() {

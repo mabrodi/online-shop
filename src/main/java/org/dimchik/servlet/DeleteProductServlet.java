@@ -1,11 +1,11 @@
-package org.dimchik.controller;
+package org.dimchik.servlet;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.dimchik.service.ProductService;
-import org.dimchik.util.TemplateEngine;
+import org.dimchik.util.ErrorRenderer;
 
 import java.io.IOException;
 
@@ -24,7 +24,9 @@ public class DeleteProductServlet extends HttpServlet {
 
             resp.setStatus(HttpServletResponse.SC_OK);
         } catch (IllegalArgumentException e) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid ID");
+            ErrorRenderer.render(resp, "Invalid product id", HttpServletResponse.SC_BAD_REQUEST);
+        } catch (Exception e) {
+            ErrorRenderer.render(resp, e);
         }
     }
 }

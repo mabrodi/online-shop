@@ -12,6 +12,12 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jakarta.servlet.version>5.0.0</jakarta.servlet.version>
+        <org.eclipse.jetty.version>11.0.25</org.eclipse.jetty.version>
+        <org.freemarker.version>2.3.32</org.freemarker.version>
+        <org.postgresql.version>42.7.4</org.postgresql.version>
+        <org.junit.jupiter.version>5.11.3</org.junit.jupiter.version>
+        <org.mockito.version>4.2.0</org.mockito.version>
     </properties>
 
     <build>
@@ -44,40 +50,40 @@
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>5.0.0</version>
+            <version>${jakarta.servlet.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>11.0.25</version>
+            <version>${org.eclipse.jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
-            <version>11.0.25</version>
+            <version>${org.eclipse.jetty.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
-            <version>2.3.32</version>
+            <version>${org.freemarker.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.4</version>
+            <version>${org.postgresql.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
-            <version>5.11.3</version>
+            <version>${org.junit.jupiter.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>4.2.0</version>
+            <version>${org.mockito.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

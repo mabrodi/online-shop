@@ -1,30 +1,31 @@
 package org.dimchik.main;
 
-import org.dimchik.controller.*;
-import org.dimchik.dao.ProductDao;
-import org.dimchik.service.ProductService;
-import org.dimchik.util.DbUtil;
-import org.dimchik.util.TemplateEngine;
+import org.dimchik.config.ComponentContainer;
+import org.dimchik.filter.AuthFilter;
+import org.dimchik.servlet.*;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        DbUtil dbUtil = DbUtil.getInstance();
-        ProductDao productDao = new ProductDao(dbUtil);
-        ProductService productService = new ProductService(productDao);
-        TemplateEngine templateEngine = new TemplateEngine();
 
-        ServletContextHandler context = new ServletContextHandler();
+        ComponentContainer container = new ComponentContainer();
+
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
 
-        context.addServlet(new ServletHolder(new ProductServlet(productService, templateEngine)), "/products");
-        context.addServlet(new ServletHolder(new ProductServlet(productService, templateEngine)), "/");
-        context.addServlet(new ServletHolder(new AddProductServlet(productService, templateEngine)), "/products/add");
-        context.addServlet(new ServletHolder(new DeleteProductServlet(productService)), "/products/delete/*");
-        context.addServlet(new ServletHolder(new UpdateProductServlet(productService, templateEngine)), "/products/update/*");
+        context.addServlet(new ServletHolder(container.loginServlet()), "/login");
+        context.addServlet(new ServletHolder(container.logoutServlet()), "/logout");
+        context.addServlet(new ServletHolder(container.productServlet()), "/products");
+        context.addServlet(new ServletHolder(container.productServlet()), "/");
+        context.addServlet(new ServletHolder(container.addProductServlet()), "/products/add");
+        context.addServlet(new ServletHolder(container.deleteProductServlet()), "/products/delete/*");
+        context.addServlet(new ServletHolder(container.updateProductServlet()), "/products/update/*");
 
+        FilterHolder authFilter = new FilterHolder(new AuthFilter());
+        context.addFilter(authFilter, "/*", null);
 
         Server server = new Server(7080);
         server.setHandler(context);

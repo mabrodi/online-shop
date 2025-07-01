@@ -1,6 +1,6 @@
 package org.dimchik.dao;
 
-import org.dimchik.model.Product;
+import org.dimchik.entity.Product;
 import org.dimchik.util.DbUtil;
 
 import java.sql.*;
@@ -11,10 +11,10 @@ public class ProductDao implements IProductDao {
     private final DbUtil dbUtil;
 
     private static final String SELECT_ALL = "SELECT * FROM products";
-    private static final String SEARCH = "SELECT * FROM products WHERE name ILIKE ?";
+    private static final String SEARCH = "SELECT * FROM products WHERE name ILIKE ? or description ILIKE ?";
     private static final String SELECT_BY_ID = "SELECT * FROM products WHERE id = ?";
-    private static final String INSERT = "INSERT INTO products (name, price, creation_date) VALUES (?, ?, ?)";
-    private static final String UPDATE = "UPDATE products SET name = ?, price = ? WHERE id = ?";
+    private static final String INSERT = "INSERT INTO products (name, price, description, creation_date) VALUES (?, ?, ?, ?)";
+    private static final String UPDATE = "UPDATE products SET name = ?, price = ?, description = ? WHERE id = ?";
     private static final String DELETE = "DELETE FROM products WHERE id = ?";
 
     public ProductDao(DbUtil dbUtil) {
@@ -46,7 +46,10 @@ public class ProductDao implements IProductDao {
         try (Connection conn = dbUtil.getConnection();
              PreparedStatement stmt = conn.prepareStatement(SEARCH)) {
 
-            stmt.setString(1, "%" + search + "%");
+            String pattern = "%" + search + "%";
+            stmt.setString(1, pattern);
+            stmt.setString(2, pattern);
+
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     products.add(mapRow(rs));
@@ -86,7 +89,8 @@ public class ProductDao implements IProductDao {
 
             stmt.setString(1, product.getName());
             stmt.setDouble(2, product.getPrice());
-            stmt.setTimestamp(3, Timestamp.valueOf(product.getCreationDate()));
+            stmt.setString(3, product.getDescription());
+            stmt.setTimestamp(4, Timestamp.valueOf(product.getCreationDate()));
 
             stmt.executeUpdate();
 
@@ -107,7 +111,8 @@ public class ProductDao implements IProductDao {
 
             stmt.setString(1, product.getName());
             stmt.setDouble(2, product.getPrice());
-            stmt.setLong(3, product.getId());
+            stmt.setString(3, product.getDescription());
+            stmt.setLong(4, product.getId());
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -132,6 +137,7 @@ public class ProductDao implements IProductDao {
         product.setId(rs.getLong("id"));
         product.setName(rs.getString("name"));
         product.setPrice(rs.getDouble("price"));
+        product.setDescription(rs.getString("description"));
         product.setCreationDate(rs.getTimestamp("creation_date").toLocalDateTime());
         return product;
     }
