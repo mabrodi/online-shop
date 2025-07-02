@@ -1,36 +1,41 @@
-package org.dimchik.controller;
-
-import org.dimchik.model.Product;
-import org.dimchik.service.ProductService;
-import org.dimchik.util.TemplateEngine;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.*;
+package org.dimchik.servlet;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.dimchik.entity.Product;
+import org.dimchik.service.impl.ProductServiceImpl;
+import org.dimchik.util.TemplateEngine;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class UpdateProductServletTest {
-    @Mock ProductService productService;
-    @Mock TemplateEngine templateEngine;
-    @Mock HttpServletRequest request;
-    @Mock HttpServletResponse response;
+    @Mock
+    ProductServiceImpl productService;
+    @Mock
+    TemplateEngine templateEngine;
+    @Mock
+    HttpServletRequest request;
+    @Mock
+    HttpServletResponse response;
 
-    UpdateProductServlet servlet;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        servlet = new UpdateProductServlet(productService, templateEngine);
-    }
 
     @Test
     public void doGetRendersUpdateForm() throws Exception {
+        UpdateProductServlet servlet = new UpdateProductServlet(productService, templateEngine);
+
         when(request.getPathInfo()).thenReturn("/8");
         Product product = new Product();
         when(productService.getProductById(8L)).thenReturn(product);
@@ -47,24 +52,33 @@ class UpdateProductServletTest {
 
     @Test
     public void doPutUpdatesProductAndReturnsOk() throws Exception {
+        UpdateProductServlet servlet = new UpdateProductServlet(productService, templateEngine);
+
         when(request.getPathInfo()).thenReturn("/5");
         when(request.getParameter("name")).thenReturn("UpdatedName");
         when(request.getParameter("price")).thenReturn("800.0");
+        when(request.getParameter("description")).thenReturn("text");
 
         servlet.doPut(request, response);
 
-        verify(productService).updateProduct(5L, "UpdatedName", 800.0);
+        verify(productService).updateProduct(5, "UpdatedName", 800.0, "text");
         verify(response).setStatus(HttpServletResponse.SC_OK);
     }
 
     @Test
     public void doPutHandlesInvalidInput() throws Exception {
+        UpdateProductServlet servlet = new UpdateProductServlet(productService, templateEngine);
+
+        StringWriter stringWriter = new StringWriter();
+
+        when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
         when(request.getPathInfo()).thenReturn("/5");
         when(request.getParameter("name")).thenReturn("TV");
         when(request.getParameter("price")).thenReturn("not-a-number");
 
         servlet.doPut(request, response);
 
-        verify(response).sendError(eq(HttpServletResponse.SC_BAD_REQUEST), contains("Invalid input"));
+        assertTrue(stringWriter.toString().contains("Invalid input"));
+        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 }

@@ -1,11 +1,11 @@
 package org.dimchik.servlet;
 
-import org.dimchik.service.ProductService;
+import org.dimchik.service.impl.ProductServiceImpl;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dimchik.util.ServletUtil;
+import org.dimchik.util.RenderHtmlUtil;
 import org.dimchik.util.SessionUtil;
 import org.dimchik.util.TemplateEngine;
 
@@ -14,10 +14,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProductServlet extends HttpServlet {
-    private final ProductService productService;
+    private final ProductServiceImpl productService;
     private final TemplateEngine templateEngine;
 
-    public ProductServlet(ProductService productService, TemplateEngine templateEngine) {
+    public ProductServlet(ProductServiceImpl productService, TemplateEngine templateEngine) {
         this.productService = productService;
         this.templateEngine = templateEngine;
     }
@@ -37,6 +37,6 @@ public class ProductServlet extends HttpServlet {
         }
 
         String html = templateEngine.processTemplate("products.html", data);
-        ServletUtil.renderHtml(resp, html);
+        RenderHtmlUtil.renderHtml(resp, html);
     }
 }

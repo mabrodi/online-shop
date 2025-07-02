@@ -24,9 +24,7 @@ services:
     ports:
       - "7080:7080"
     environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: online-shop
+      DB_URL: jdbc:postgresql://db:5432/online-shop
       DB_USER: postgres
       DB_PASSWORD: postgres
     networks:

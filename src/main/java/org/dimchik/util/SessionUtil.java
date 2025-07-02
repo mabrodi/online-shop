@@ -10,6 +10,11 @@ public class SessionUtil {
         return session != null ? (User) session.getAttribute("user") : null;
     }
 
+    public static void login(HttpServletRequest req, User user) {
+        HttpSession session = req.getSession();
+        session.setAttribute("user", user);
+    }
+
     public static boolean isLoggedIn(HttpServletRequest req) {
         return getCurrentUser(req) != null;
     }

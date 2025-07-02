@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public class ServletUtil {
+public class RenderHtmlUtil {
     public static void renderHtml(HttpServletResponse resp, String html) throws IOException {
         renderHtml(resp, html,  HttpServletResponse.SC_OK);
     }

@@ -1,21 +1,21 @@
 package org.dimchik.config;
 
-import org.dimchik.dao.IProductDao;
-import org.dimchik.dao.IUserDao;
-import org.dimchik.dao.UserDao;
-import org.dimchik.service.UserService;
-import org.dimchik.servlet.*;
 import org.dimchik.dao.ProductDao;
-import org.dimchik.service.ProductService;
+import org.dimchik.dao.UserDao;
+import org.dimchik.dao.impl.UserDaoImpl;
+import org.dimchik.service.impl.UserServiceImpl;
+import org.dimchik.servlet.*;
+import org.dimchik.dao.impl.ProductDaoImpl;
+import org.dimchik.service.impl.ProductServiceImpl;
 import org.dimchik.util.DbUtil;
 import org.dimchik.util.TemplateEngine;
 
 public class ComponentContainer {
     private final DbUtil dbUtil = DbUtil.getInstance();
-    private final IUserDao userDao = new UserDao(dbUtil);
-    private final IProductDao productDao = new ProductDao(dbUtil);
-    private final UserService userService = new UserService(userDao);
-    private final ProductService productService = new ProductService(productDao);
+    private final UserDao userDao = new UserDaoImpl(dbUtil);
+    private final ProductDao productDao = new ProductDaoImpl(dbUtil);
+    private final UserServiceImpl userService = new UserServiceImpl(userDao);
+    private final ProductServiceImpl productService = new ProductServiceImpl(productDao);
     private final TemplateEngine templateEngine = new TemplateEngine();
 
     public LoginServlet loginServlet() {

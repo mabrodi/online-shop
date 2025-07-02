@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ErrorRenderer {
+public class ErrorRendererUtil {
     private static final TemplateEngine templateEngine = new TemplateEngine();
 
     public static void render(HttpServletResponse resp, String message) throws IOException {
@@ -19,7 +19,7 @@ public class ErrorRenderer {
 
         String html = templateEngine.processTemplate("error.html", data);
 
-        ServletUtil.renderHtml(resp, html, status);
+        RenderHtmlUtil.renderHtml(resp, html, status);
     }
 
     public static void render(HttpServletResponse resp, Exception e) throws IOException {
