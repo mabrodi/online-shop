@@ -4,6 +4,7 @@ import org.dimchik.dao.UserDao;
 import org.dimchik.entity.User;
 import org.dimchik.service.UserService;
 import org.dimchik.service.validation.UserValidator;
+import org.dimchik.util.CryptoHash;
 
 public class UserServiceImpl implements UserService {
     private final UserDao userDao;
@@ -15,8 +16,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(String email, String password) {
         UserValidator.validate(email, password);
-        User user = userDao.findByEmailAndPassword(email, password);
-        if (user == null) {
+        User user = userDao.findByEmail(email);
+        if (user == null || !CryptoHash.isMatch(password, user.getPassword())) {
             throw new IllegalArgumentException("Invalid email or password");
         }
 

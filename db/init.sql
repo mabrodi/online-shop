@@ -14,7 +14,7 @@ CREATE TABLE users (
 );
 
 INSERT INTO "users" ("id", "email", "password", "name") VALUES
-    (1, 'test@example.com', '12341234', 'Admin');
+    (1, 'test@example.com', '1718c24b10aeb8099e3fc44960ab6949ab76a267352459f203ea1036bec382c2', 'Admin');
 
 INSERT INTO "products" ("id", "name", "price", "creation_date", "description") VALUES
     (1, 'Apple', 1200.00, '2025-07-01 16:06:54.578422', 'Apple product');

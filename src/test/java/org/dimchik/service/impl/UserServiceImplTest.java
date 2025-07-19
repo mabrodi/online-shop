@@ -2,6 +2,7 @@ package org.dimchik.service.impl;
 
 import org.dimchik.dao.UserDao;
 import org.dimchik.entity.User;
+import org.dimchik.util.CryptoHash;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -17,16 +18,26 @@ class UserServiceImplTest {
     UserDao userDao;
 
     @Test
-    void loginShouldReturnUserWhenValid() {
+    void loginShouldReturnUserWhenCredentialAndValid() {
+        String email = "john@example.com";
+        String rawPassword = "password123";
+        String hashedPassword = CryptoHash.hash(rawPassword);
         UserServiceImpl service = new UserServiceImpl(userDao);
 
         User user = new User();
-        when(userDao.findByEmailAndPassword("user@example.com", "password")).thenReturn(user);
+        user.setEmail(email);
+        user.setPassword(hashedPassword);
+        user.setId(1L);
+        user.setName("John Doe");
 
-        User result = service.login("user@example.com", "password");
+        when(userDao.findByEmail(email)).thenReturn(user);
 
-        assertEquals(user, result);
-        verify(userDao).findByEmailAndPassword("user@example.com", "password");
+        User result = service.login(email, rawPassword);
+
+        assertNotNull(result);
+        assertEquals(user.getId(), result.getId());
+        assertEquals(user.getEmail(), result.getEmail());
+        assertEquals(user.getName(), result.getName());
     }
 
     @Test
@@ -59,7 +70,7 @@ class UserServiceImplTest {
     void loginShouldThrowWhenUserNotFound() {
         UserServiceImpl service = new UserServiceImpl(userDao);
 
-        when(userDao.findByEmailAndPassword("user@example.com", "password")).thenReturn(null);
+        when(userDao.findByEmail("user@example.com")).thenReturn(null);
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
@@ -67,6 +78,6 @@ class UserServiceImplTest {
         );
 
         assertEquals("Invalid email or password", ex.getMessage());
-        verify(userDao).findByEmailAndPassword("user@example.com", "password");
+        verify(userDao).findByEmail("user@example.com");
     }
 }

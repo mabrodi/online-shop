@@ -2,6 +2,7 @@ package org.dimchik;
 
 import org.dimchik.config.ComponentContainer;
 import org.dimchik.security.AuthFilter;
+import org.dimchik.util.CryptoHash;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -9,7 +10,6 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 public class App {
     public static void main(String[] args) throws Exception {
-
         ComponentContainer container = new ComponentContainer();
 
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);

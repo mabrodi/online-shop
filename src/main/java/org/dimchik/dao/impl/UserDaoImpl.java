@@ -12,19 +12,18 @@ import java.sql.SQLException;
 public class UserDaoImpl implements UserDao {
     private final DbUtil dbUtil;
 
-    private static final String SELECT_BY_EMAIL_AND_PASSWORD = "SELECT * FROM users WHERE email = ? AND password = ?";
+    private static final String SELECT_BY_EMAIL_AND_PASSWORD = "SELECT * FROM users WHERE email = ?";
 
     public UserDaoImpl(DbUtil dbUtil) {
         this.dbUtil = dbUtil;
     }
 
     @Override
-    public User findByEmailAndPassword(String email, String password) {
+    public User findByEmail(String email) {
         try (Connection connection = dbUtil.getDataSource().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_BY_EMAIL_AND_PASSWORD)) {
 
             preparedStatement.setString(1, email);
-            preparedStatement.setString(2, password);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {

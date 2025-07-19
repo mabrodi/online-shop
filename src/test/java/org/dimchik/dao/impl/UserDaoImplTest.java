@@ -30,7 +30,7 @@ class UserDaoImplTest {
     ResultSet resultSet;
 
     @Test
-    void findByEmailAndPasswordShouldReturnUserWhenFound() throws Exception {
+    void findByEmailShouldReturnUserWhenFound() throws Exception {
         when(dbUtil.getDataSource()).thenReturn(dataSource);
         when(dataSource.getConnection()).thenReturn(connection);
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
@@ -44,7 +44,7 @@ class UserDaoImplTest {
 
         UserDaoImpl dao = new UserDaoImpl(dbUtil);
 
-        User user = dao.findByEmailAndPassword("john@example.com", "secret");
+        User user = dao.findByEmail("john@example.com");
 
         assertNotNull(user);
         assertEquals(1L, user.getId());
@@ -53,12 +53,11 @@ class UserDaoImplTest {
         assertEquals("secret", user.getPassword());
 
         verify(preparedStatement).setString(1, "john@example.com");
-        verify(preparedStatement).setString(2, "secret");
         verify(preparedStatement).executeQuery();
     }
 
     @Test
-    void findByEmailAndPasswordShouldReturnNullWhenNotFound() throws Exception {
+    void findByEmailShouldReturnNullWhenNotFound() throws Exception {
         when(dbUtil.getDataSource()).thenReturn(dataSource);
         when(dataSource.getConnection()).thenReturn(connection);
         when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
@@ -67,7 +66,7 @@ class UserDaoImplTest {
 
         UserDaoImpl dao = new UserDaoImpl(dbUtil);
 
-        User user = dao.findByEmailAndPassword("john@example.com", "secret");
+        User user = dao.findByEmail("john@example.com");
 
         assertNull(user);
     }
