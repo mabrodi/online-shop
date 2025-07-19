@@ -24,13 +24,14 @@ public class AuthFilter implements Filter {
 
         String path = request.getRequestURI();
 
-        if (path.endsWith("/login") || path.endsWith("/login.html")) {
+        if ("/login".equals(path) || "/login.html".equals(path)) {
             chain.doFilter(req, res);
             return;
         }
 
         if (authService.isLoggedIn(request)) {
             chain.doFilter(req, res);
+            return;
         }
 
         response.sendRedirect("/login");
