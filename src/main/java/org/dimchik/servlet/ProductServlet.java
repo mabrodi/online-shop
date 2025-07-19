@@ -1,12 +1,12 @@
 package org.dimchik.servlet;
 
+import org.dimchik.service.AuthService;
 import org.dimchik.service.impl.ProductServiceImpl;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.dimchik.util.RenderHtmlUtil;
-import org.dimchik.util.SessionUtil;
 import org.dimchik.util.TemplateEngine;
 
 import java.io.IOException;
@@ -14,10 +14,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProductServlet extends HttpServlet {
+    private final AuthService authService;
     private final ProductServiceImpl productService;
     private final TemplateEngine templateEngine;
 
-    public ProductServlet(ProductServiceImpl productService, TemplateEngine templateEngine) {
+    public ProductServlet(AuthService authService, ProductServiceImpl productService, TemplateEngine templateEngine) {
+        this.authService = authService;
         this.productService = productService;
         this.templateEngine = templateEngine;
     }
@@ -27,7 +29,7 @@ public class ProductServlet extends HttpServlet {
         String search = req.getParameter("search");
         Map<String, Object> data = new HashMap<>();
 
-        data.put("currentUser", SessionUtil.getCurrentUser(req));
+        data.put("currentUser", authService.getCurrentUser(req));
 
         if (search != null && !search.isBlank()) {
             data.put("products", productService.searchProducts(search));

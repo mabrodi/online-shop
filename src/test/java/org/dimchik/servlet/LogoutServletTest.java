@@ -3,6 +3,8 @@ package org.dimchik.servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.dimchik.service.AuthService;
+import org.dimchik.service.impl.AuthServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -19,7 +21,8 @@ class LogoutServletTest {
 
     @Test
     void doGetShouldInvalidateSessionAndRedirect() throws Exception {
-        LogoutServlet servlet = new LogoutServlet();
+        AuthService authService = new AuthServiceImpl();
+        LogoutServlet servlet = new LogoutServlet(authService);
 
         HttpSession session = mock(HttpSession.class);
         when(request.getSession(false)).thenReturn(session);
@@ -32,7 +35,8 @@ class LogoutServletTest {
 
     @Test
     void doGetShouldRedirectWhenNoSession() throws Exception {
-        LogoutServlet servlet = new LogoutServlet();
+        AuthService authService = new AuthServiceImpl();
+        LogoutServlet servlet = new LogoutServlet(authService);
 
         when(request.getSession(false)).thenReturn(null);
 

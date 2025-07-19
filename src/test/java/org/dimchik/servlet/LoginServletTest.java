@@ -4,6 +4,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.dimchik.entity.User;
+import org.dimchik.service.AuthService;
+import org.dimchik.service.impl.AuthServiceImpl;
 import org.dimchik.service.impl.UserServiceImpl;
 import org.dimchik.util.TemplateEngine;
 import org.junit.jupiter.api.Test;
@@ -33,7 +35,8 @@ class LoginServletTest {
 
     @Test
     public void doGetWritesCreateForm() throws Exception {
-        LoginServlet servlet = new LoginServlet(templateEngine, userService);
+        AuthService authService =  new AuthServiceImpl();
+        LoginServlet servlet = new LoginServlet(authService, templateEngine, userService);
 
         StringWriter stringWriter = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
@@ -49,7 +52,8 @@ class LoginServletTest {
 
     @Test
     public void doPostShouldLoginBySessionAndRedirect() throws Exception {
-        LoginServlet servlet = new LoginServlet(templateEngine, userService);
+        AuthService authService =  new AuthServiceImpl();
+        LoginServlet servlet = new LoginServlet(authService, templateEngine, userService);
 
         User user = new User();
         when(request.getParameter("email")).thenReturn("email@example.com");
@@ -67,7 +71,8 @@ class LoginServletTest {
 
     @Test
     void doPostShouldHandleInvalidLogin() throws Exception {
-        LoginServlet servlet = new LoginServlet(templateEngine, userService);
+        AuthService authService =  new AuthServiceImpl();
+        LoginServlet servlet = new LoginServlet(authService, templateEngine, userService);
 
         when(request.getParameter("email")).thenReturn("email@example.com");
         when(request.getParameter("password")).thenReturn("wrong");

@@ -4,10 +4,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.dimchik.service.AuthService;
 import org.dimchik.service.impl.ProductServiceImpl;
 import org.dimchik.util.ErrorRendererUtil;
 import org.dimchik.util.RenderHtmlUtil;
-import org.dimchik.util.SessionUtil;
 import org.dimchik.util.TemplateEngine;
 
 import java.io.IOException;
@@ -15,10 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class UpdateProductServlet extends HttpServlet {
+    private final AuthService authService;
     private final ProductServiceImpl productService;
     private final TemplateEngine templateEngine;
 
-    public UpdateProductServlet(ProductServiceImpl productService, TemplateEngine templateEngine) {
+    public UpdateProductServlet(AuthService authService, ProductServiceImpl productService, TemplateEngine templateEngine) {
+        this.authService = authService;
         this.productService = productService;
         this.templateEngine = templateEngine;
     }
@@ -28,7 +30,7 @@ public class UpdateProductServlet extends HttpServlet {
         try {
             long id = Long.parseLong(req.getPathInfo().substring(1));
             Map<String, Object> data = new HashMap<>();
-            data.put("currentUser", SessionUtil.getCurrentUser(req));
+            data.put("currentUser", authService.getCurrentUser(req));
             data.put("product", productService.getProductById(id));
 
             String html = templateEngine.processTemplate("productFormUpdate.html", data);

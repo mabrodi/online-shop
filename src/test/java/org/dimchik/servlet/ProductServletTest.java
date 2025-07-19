@@ -2,6 +2,7 @@ package org.dimchik.servlet;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.dimchik.service.impl.AuthServiceImpl;
 import org.dimchik.service.impl.ProductServiceImpl;
 import org.dimchik.util.TemplateEngine;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ProductServletTest {
     @Mock
+    AuthServiceImpl authService;
+    @Mock
     ProductServiceImpl productService;
     @Mock
     TemplateEngine templateEngine;
@@ -33,7 +36,7 @@ class ProductServletTest {
 
     @Test
     public void doGetWriteHtml() throws Exception {
-        ProductServlet servlet = new ProductServlet(productService, templateEngine);
+        ProductServlet servlet = new ProductServlet(authService, productService, templateEngine);
 
         StringWriter sw = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(sw));
@@ -49,7 +52,7 @@ class ProductServletTest {
 
     @Test
     void doGetWithSearchShouldCallSearchProductsAndPassQuery() throws Exception {
-        ProductServlet servlet = new ProductServlet(productService, templateEngine);
+        ProductServlet servlet = new ProductServlet(authService,productService, templateEngine);
 
         StringWriter stringWriter = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));

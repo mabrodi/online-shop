@@ -3,11 +3,19 @@ package org.dimchik.security;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dimchik.util.SessionUtil;
+import org.dimchik.service.AuthService;
+import org.dimchik.service.impl.AuthServiceImpl;
 
 import java.io.IOException;
 
 public class AuthFilter implements Filter {
+
+    private final AuthService authService;
+
+    public AuthFilter(AuthService authService) {
+        this.authService = authService;
+    }
+
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
             throws IOException, ServletException {
@@ -22,7 +30,7 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        if (SessionUtil.isLoggedIn(request)) {
+        if (authService.isLoggedIn(request)) {
             chain.doFilter(req, res);
         } else {
             response.sendRedirect("/login");

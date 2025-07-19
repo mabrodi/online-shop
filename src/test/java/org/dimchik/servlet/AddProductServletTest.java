@@ -2,6 +2,7 @@ package org.dimchik.servlet;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.dimchik.service.impl.AuthServiceImpl;
 import org.dimchik.service.impl.ProductServiceImpl;
 import org.dimchik.util.TemplateEngine;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,8 @@ class AddProductServletTest {
     @Mock
     ProductServiceImpl productService;
     @Mock
+    AuthServiceImpl authService;
+    @Mock
     TemplateEngine templateEngine;
     @Mock
     HttpServletRequest request;
@@ -34,7 +37,7 @@ class AddProductServletTest {
 
     @Test
     public void doGetWritesCreateForm() throws Exception {
-        AddProductServlet servlet = new  AddProductServlet(productService, templateEngine);
+        AddProductServlet servlet = new  AddProductServlet(authService, productService, templateEngine);
 
         StringWriter stringWriter = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
@@ -50,7 +53,7 @@ class AddProductServletTest {
 
     @Test
     public void doPostAddsProductAndRedirects() throws Exception {
-        AddProductServlet servlet = new  AddProductServlet(productService, templateEngine);
+        AddProductServlet servlet = new  AddProductServlet(authService, productService, templateEngine);
 
         when(request.getParameter("name")).thenReturn("TestName");
         when(request.getParameter("price")).thenReturn("150.0");
@@ -64,7 +67,7 @@ class AddProductServletTest {
 
     @Test
     public void doPostHandlesInvalidPriceGracefully() throws Exception {
-        AddProductServlet servlet = new  AddProductServlet(productService, templateEngine);
+        AddProductServlet servlet = new  AddProductServlet(authService, productService, templateEngine);
 
         StringWriter stringWriter = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));

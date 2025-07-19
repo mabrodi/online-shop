@@ -23,7 +23,7 @@ public class App {
         context.addServlet(new ServletHolder(container.deleteProductServlet()), "/products/delete/*");
         context.addServlet(new ServletHolder(container.updateProductServlet()), "/products/update/*");
 
-        FilterHolder authFilter = new FilterHolder(new AuthFilter());
+        FilterHolder authFilter = new FilterHolder(new AuthFilter(container.getAuthService()));
         context.addFilter(authFilter, "/*", null);
 
         Server server = new Server(7080);

@@ -3,6 +3,7 @@ package org.dimchik.servlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.dimchik.entity.Product;
+import org.dimchik.service.impl.AuthServiceImpl;
 import org.dimchik.service.impl.ProductServiceImpl;
 import org.dimchik.util.TemplateEngine;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class UpdateProductServletTest {
     @Mock
+    AuthServiceImpl authService;
+    @Mock
     ProductServiceImpl productService;
     @Mock
     TemplateEngine templateEngine;
@@ -34,7 +37,7 @@ class UpdateProductServletTest {
 
     @Test
     public void doGetRendersUpdateForm() throws Exception {
-        UpdateProductServlet servlet = new UpdateProductServlet(productService, templateEngine);
+        UpdateProductServlet servlet = new UpdateProductServlet(authService, productService, templateEngine);
 
         when(request.getPathInfo()).thenReturn("/8");
         Product product = new Product();
@@ -52,7 +55,7 @@ class UpdateProductServletTest {
 
     @Test
     public void doPutUpdatesProductAndReturnsOk() throws Exception {
-        UpdateProductServlet servlet = new UpdateProductServlet(productService, templateEngine);
+        UpdateProductServlet servlet = new UpdateProductServlet(authService, productService, templateEngine);
 
         when(request.getPathInfo()).thenReturn("/5");
         when(request.getParameter("name")).thenReturn("UpdatedName");
@@ -67,7 +70,7 @@ class UpdateProductServletTest {
 
     @Test
     public void doPutHandlesInvalidInput() throws Exception {
-        UpdateProductServlet servlet = new UpdateProductServlet(productService, templateEngine);
+        UpdateProductServlet servlet = new UpdateProductServlet(authService, productService, templateEngine);
 
         StringWriter stringWriter = new StringWriter();
 

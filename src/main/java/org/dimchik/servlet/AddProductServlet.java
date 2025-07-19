@@ -3,10 +3,10 @@ package org.dimchik.servlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.dimchik.service.AuthService;
 import org.dimchik.service.impl.ProductServiceImpl;
 import org.dimchik.util.ErrorRendererUtil;
 import org.dimchik.util.RenderHtmlUtil;
-import org.dimchik.util.SessionUtil;
 import org.dimchik.util.TemplateEngine;
 
 import java.io.IOException;
@@ -14,10 +14,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AddProductServlet extends HttpServlet {
+    private final AuthService authService;
     private final ProductServiceImpl productService;
     private final TemplateEngine templateEngine;
 
-    public AddProductServlet(ProductServiceImpl productService, TemplateEngine templateEngine) {
+    public AddProductServlet(AuthService authService, ProductServiceImpl productService, TemplateEngine templateEngine) {
+        this.authService = authService;
         this.productService = productService;
         this.templateEngine = templateEngine;
     }
@@ -25,7 +27,7 @@ public class AddProductServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         Map<String, Object> data = new HashMap<>();
-        data.put("currentUser", SessionUtil.getCurrentUser(req));
+        data.put("currentUser", authService.getCurrentUser(req));
 
         String html = templateEngine.processTemplate("productFormCreate.html", data);
         RenderHtmlUtil.renderHtml(resp, html);
