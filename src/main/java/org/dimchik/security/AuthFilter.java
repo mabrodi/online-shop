@@ -4,7 +4,6 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.dimchik.service.AuthService;
-import org.dimchik.service.impl.AuthServiceImpl;
 
 import java.io.IOException;
 
@@ -32,8 +31,8 @@ public class AuthFilter implements Filter {
 
         if (authService.isLoggedIn(request)) {
             chain.doFilter(req, res);
-        } else {
-            response.sendRedirect("/login");
         }
+
+        response.sendRedirect("/login");
     }
 }
