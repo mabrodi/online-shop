@@ -1,7 +1,7 @@
 package org.dimchik;
 
 import org.dimchik.config.ComponentContainer;
-import org.dimchik.filter.AuthFilter;
+import org.dimchik.security.AuthFilter;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;

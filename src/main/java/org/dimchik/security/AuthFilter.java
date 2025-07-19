@@ -1,10 +1,8 @@
-package org.dimchik.filter;
+package org.dimchik.security;
 
 import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.dimchik.util.SessionUtil;
 
 import java.io.IOException;
