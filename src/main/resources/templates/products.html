@@ -31,8 +31,11 @@
                         <a href="/products/update/${product.id}" class="btn btn-outline-primary btn-sm me-2">
                             <i class="bi bi-pencil"></i> Update
                         </a>
-                        <button class="btn btn-outline-danger btn-sm delete-btn" data-id="${product.id}">
+                        <button class="btn btn-outline-danger btn-sm delete-btn me-2" data-id="${product.id}">
                             <i class="bi bi-trash"></i> Delete
+                        </button>
+                        <button class="btn btn-outline-success btn-sm cart-btn" data-id="${product.id}">
+                            <i class="bi bi-cart"></i> Add to cart
                         </button>
                     </div>
                 </div>
@@ -60,6 +63,27 @@
                 .catch(error => {
                     console.error("Ошибка:", error);
                     alert("An error occurred while deleting");
+                });
+        });
+    });
+
+    document.querySelectorAll('.cart-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.dataset.id;
+
+            fetch("/cart/add/" + id, {
+                method: 'POST'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = "/products";
+                    } else {
+                        alert("Error add: " + response.status);
+                    }
+                })
+                .catch(error => {
+                    console.error("Ошибка:", error);
+                    alert("An error added cart");
                 });
         });
     });

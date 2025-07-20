@@ -13,6 +13,15 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE carts (
+    id BIGSERIAL PRIMARY KEY,
+    user_id int4 NOT NULL,
+    product_id int4 NOT NULL,
+
+    CONSTRAINT "user_id_foreign" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE CASCADE,
+    CONSTRAINT "product_id_foreign" FOREIGN KEY ("product_id") REFERENCES "public"."products"("id") ON DELETE CASCADE
+);
+
 INSERT INTO "users" ("id", "email", "password", "name") VALUES
     (1, 'test@example.com', '-87-75-1950-1178655-38-120-3682104-110-37126-574-72-109-30-40499-1109120-44-4488-994120', 'Admin');
 

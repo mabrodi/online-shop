@@ -2,6 +2,7 @@ package org.dimchik.service.impl;
 
 import org.dimchik.dao.UserDao;
 import org.dimchik.entity.User;
+import org.dimchik.service.UserService;
 import org.dimchik.util.CryptoHash;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +23,7 @@ class UserServiceImplTest {
         String email = "john@example.com";
         String rawPassword = "password123";
         String hashedPassword = CryptoHash.hash(rawPassword);
-        UserServiceImpl service = new UserServiceImpl(userDao);
+        UserService service = new UserServiceImpl(userDao);
 
         User user = new User();
         user.setEmail(email);
@@ -42,7 +43,7 @@ class UserServiceImplTest {
 
     @Test
     void loginShouldThrowWhenValidationFails_nullEmail() {
-        UserServiceImpl service = new UserServiceImpl(userDao);
+        UserService service = new UserServiceImpl(userDao);
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
@@ -55,7 +56,7 @@ class UserServiceImplTest {
 
     @Test
     void loginShouldThrowWhenValidationFails_invalidEmail() {
-        UserServiceImpl service = new UserServiceImpl(userDao);
+        UserService service = new UserServiceImpl(userDao);
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
@@ -68,7 +69,7 @@ class UserServiceImplTest {
 
     @Test
     void loginShouldThrowWhenUserNotFound() {
-        UserServiceImpl service = new UserServiceImpl(userDao);
+        UserService service = new UserServiceImpl(userDao);
 
         when(userDao.findByEmail("user@example.com")).thenReturn(null);
 

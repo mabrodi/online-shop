@@ -1,0 +1,83 @@
+<#import "layout.html" as layout>
+
+<@layout.page title="Your Cart">
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Your Cart</h1>
+
+    <button class="btn btn-outline-danger btn-sm clean-from-cart">
+        <i class="bi bi-trash"></i> Clear Cart
+    </button>
+</div>
+
+<#if carts?size == 0>
+<div class="alert alert-info">Your cart is empty.</div>
+<#else>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    <#list carts as cart>
+    <div class="col">
+        <div class="card h-100 product-card">
+            <div class="card-body">
+                <h5 class="card-title">${cart.product.name}</h5>
+                <h4 class="card-price text-success">${cart.product.price} $</h4>
+                <p class="card-text text-muted">Added: ${cart.product.creationDateFormatted!}</p>
+            </div>
+            <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end">
+                <button class="btn btn-outline-danger btn-sm remove-from-cart" data-id="${cart.id}">
+                    <i class="bi bi-trash"></i> Remove
+                </button>
+            </div>
+        </div>
+    </div>
+</#list>
+</div>
+</#if>
+
+<script>
+    document.querySelectorAll('.remove-from-cart').forEach(button => {
+        button.addEventListener('click', function () {
+            const cartId = this.dataset.id;
+
+            if (!confirm("Are you sure you want to remove this product from your cart?")) return;
+
+            fetch("/cart/delete/" + cartId, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = "/cart";
+                    } else {
+                        alert("Error while removing from cart: " + response.status);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred while deleting from cart");
+                });
+        });
+    });
+
+    document.querySelectorAll('.clean-from-cart').forEach(button => {
+        button.addEventListener('click', function () {
+
+            if (!confirm("Are you sure you want to clean this products from your cart?")) return;
+
+            fetch("/cart/clean", {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = "/cart";
+                    } else {
+                        alert("Error while cleaning from cart: " + response.status);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred while cleaning from cart");
+                });
+        });
+    });
+</script>
+
+</@layout.page>

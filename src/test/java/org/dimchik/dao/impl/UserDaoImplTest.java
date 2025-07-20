@@ -1,5 +1,6 @@
 package org.dimchik.dao.impl;
 
+import org.dimchik.dao.UserDao;
 import org.dimchik.entity.User;
 import org.dimchik.util.DbUtil;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ class UserDaoImplTest {
         when(resultSet.getString("email")).thenReturn("john@example.com");
         when(resultSet.getString("password")).thenReturn("secret");
 
-        UserDaoImpl dao = new UserDaoImpl(dbUtil);
+        UserDao dao = new UserDaoImpl(dbUtil);
 
         User user = dao.findByEmail("john@example.com");
 
@@ -64,7 +65,7 @@ class UserDaoImplTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
 
-        UserDaoImpl dao = new UserDaoImpl(dbUtil);
+        UserDao dao = new UserDaoImpl(dbUtil);
 
         User user = dao.findByEmail("john@example.com");
 

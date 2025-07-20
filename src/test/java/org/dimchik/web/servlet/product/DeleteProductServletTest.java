@@ -1,16 +1,14 @@
-package org.dimchik.servlet;
+package org.dimchik.web.servlet.product;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dimchik.service.impl.ProductServiceImpl;
+import org.dimchik.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,7 +16,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class DeleteProductServletTest {
     @Mock
-    ProductServiceImpl productService;
+    ProductService productService;
     @Mock
     HttpServletRequest request;
     @Mock
@@ -40,14 +38,13 @@ class DeleteProductServletTest {
     public void doDeleteHandlesInvalidId() throws Exception {
         DeleteProductServlet servlet = new DeleteProductServlet(productService);
 
-        StringWriter stringWriter = new StringWriter();
-        when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
-
         when(request.getPathInfo()).thenReturn("/not-a-number");
 
-        servlet.doDelete(request, response);
+        IllegalArgumentException thrown = assertThrows(
+                IllegalArgumentException.class,
+                () -> servlet.doDelete(request, response)
+        );
 
-        assertTrue(stringWriter.toString().contains("Invalid product id"));
-        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        assertTrue(thrown.getMessage().contains("Invalid product id: not-a-number"));
     }
 }

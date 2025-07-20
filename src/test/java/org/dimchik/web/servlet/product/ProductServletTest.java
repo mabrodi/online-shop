@@ -1,9 +1,9 @@
-package org.dimchik.servlet;
+package org.dimchik.web.servlet.product;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dimchik.service.impl.AuthServiceImpl;
-import org.dimchik.service.impl.ProductServiceImpl;
+import org.dimchik.service.AuthService;
+import org.dimchik.service.ProductService;
 import org.dimchik.util.TemplateEngine;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,9 +24,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ProductServletTest {
     @Mock
-    AuthServiceImpl authService;
+    AuthService authService;
     @Mock
-    ProductServiceImpl productService;
+    ProductService productService;
     @Mock
     TemplateEngine templateEngine;
     @Mock

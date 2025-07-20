@@ -1,12 +1,12 @@
-package org.dimchik.servlet;
+package org.dimchik.web.servlet.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.dimchik.entity.User;
 import org.dimchik.service.AuthService;
+import org.dimchik.service.UserService;
 import org.dimchik.service.impl.AuthServiceImpl;
-import org.dimchik.service.impl.UserServiceImpl;
 import org.dimchik.util.TemplateEngine;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class LoginServletTest {
     @Mock
-    UserServiceImpl userService;
+    UserService userService;
     @Mock
     TemplateEngine templateEngine;
     @Mock

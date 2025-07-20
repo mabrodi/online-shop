@@ -1,15 +1,15 @@
-package org.dimchik.servlet;
+package org.dimchik.web.servlet.product;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.dimchik.service.AuthService;
+import org.dimchik.service.ProductService;
 import org.dimchik.service.impl.AuthServiceImpl;
 import org.dimchik.service.impl.ProductServiceImpl;
 import org.dimchik.util.TemplateEngine;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.PrintWriter;
@@ -25,9 +25,9 @@ import static org.mockito.Mockito.when;
 class AddProductServletTest {
 
     @Mock
-    ProductServiceImpl productService;
+    ProductService productService;
     @Mock
-    AuthServiceImpl authService;
+    AuthService authService;
     @Mock
     TemplateEngine templateEngine;
     @Mock

@@ -1,7 +1,7 @@
-package org.dimchik.servlet;
+package org.dimchik.web.servlet.product;
 
 import org.dimchik.service.AuthService;
-import org.dimchik.service.impl.ProductServiceImpl;
+import org.dimchik.service.ProductService;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,10 +15,10 @@ import java.util.Map;
 
 public class ProductServlet extends HttpServlet {
     private final AuthService authService;
-    private final ProductServiceImpl productService;
+    private final ProductService productService;
     private final TemplateEngine templateEngine;
 
-    public ProductServlet(AuthService authService, ProductServiceImpl productService, TemplateEngine templateEngine) {
+    public ProductServlet(AuthService authService, ProductService productService, TemplateEngine templateEngine) {
         this.authService = authService;
         this.productService = productService;
         this.templateEngine = templateEngine;

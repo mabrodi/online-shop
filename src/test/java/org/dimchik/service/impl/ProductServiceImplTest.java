@@ -2,6 +2,7 @@ package org.dimchik.service.impl;
 
 import org.dimchik.dao.ProductDao;
 import org.dimchik.entity.Product;
+import org.dimchik.service.ProductService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -22,7 +23,7 @@ class ProductServiceImplTest {
 
     @Test
     void getAllProductsShouldReturnProducts() {
-        ProductServiceImpl service = new ProductServiceImpl(productDao);
+        ProductService service = new ProductServiceImpl(productDao);
         List<Product> products = List.of(new Product());
         when(productDao.findAll()).thenReturn(products);
 
@@ -34,7 +35,7 @@ class ProductServiceImplTest {
 
     @Test
     void searchProductsShouldCallFindBySearchWhenQueryNotBlank() {
-        ProductServiceImpl service = new ProductServiceImpl(productDao);
+        ProductService service = new ProductServiceImpl(productDao);
         List<Product> products = List.of(new Product());
         when(productDao.findBySearch("apple")).thenReturn(products);
 
@@ -46,7 +47,7 @@ class ProductServiceImplTest {
 
     @Test
     void searchProductsShouldCallFindAllWhenQueryBlank() {
-        ProductServiceImpl service = new ProductServiceImpl(productDao);
+        ProductService service = new ProductServiceImpl(productDao);
         List<Product> products = List.of(new Product());
         when(productDao.findAll()).thenReturn(products);
 
@@ -58,7 +59,7 @@ class ProductServiceImplTest {
 
     @Test
     void addProductShouldValidateAndSave() {
-        ProductServiceImpl service = new ProductServiceImpl(productDao);
+        ProductService service = new ProductServiceImpl(productDao);
 
         service.addProduct("Product", 10.0, "Description");
 
@@ -74,7 +75,7 @@ class ProductServiceImplTest {
 
     @Test
     void addProductShouldThrowWhenInvalid() {
-        ProductServiceImpl service = new ProductServiceImpl(productDao);
+        ProductService service = new ProductServiceImpl(productDao);
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
@@ -86,7 +87,7 @@ class ProductServiceImplTest {
 
     @Test
     void getProductByIdShouldValidateAndReturn() {
-        ProductServiceImpl service = new ProductServiceImpl(productDao);
+        ProductService service = new ProductServiceImpl(productDao);
         Product product = new Product();
         when(productDao.findById(1L)).thenReturn(product);
 
@@ -98,7 +99,7 @@ class ProductServiceImplTest {
 
     @Test
     void getProductByIdShouldThrowWhenInvalidId() {
-        ProductServiceImpl service = new ProductServiceImpl(productDao);
+        ProductService service = new ProductServiceImpl(productDao);
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
@@ -110,7 +111,7 @@ class ProductServiceImplTest {
 
     @Test
     void updateProductShouldValidateAndUpdate() {
-        ProductServiceImpl service = new ProductServiceImpl(productDao);
+        ProductService service = new ProductServiceImpl(productDao);
 
         service.updateProduct(1L, "Updated", 20.0, "Updated desc");
 
@@ -126,7 +127,7 @@ class ProductServiceImplTest {
 
     @Test
     void updateProductShouldThrowWhenInvalid() {
-        ProductServiceImpl service = new ProductServiceImpl(productDao);
+        ProductService service = new ProductServiceImpl(productDao);
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,
@@ -138,7 +139,7 @@ class ProductServiceImplTest {
 
     @Test
     void deleteProductShouldValidateAndDelete() {
-        ProductServiceImpl service = new ProductServiceImpl(productDao);
+        ProductService service = new ProductServiceImpl(productDao);
 
         service.deleteProduct(1L);
 
@@ -147,7 +148,7 @@ class ProductServiceImplTest {
 
     @Test
     void deleteProductShouldThrowWhenInvalid() {
-        ProductServiceImpl service = new ProductServiceImpl(productDao);
+        ProductService service = new ProductServiceImpl(productDao);
 
         IllegalArgumentException ex = assertThrows(
                 IllegalArgumentException.class,

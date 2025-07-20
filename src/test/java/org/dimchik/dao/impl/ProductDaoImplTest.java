@@ -1,5 +1,6 @@
 package org.dimchik.dao.impl;
 
+import org.dimchik.dao.ProductDao;
 import org.dimchik.entity.Product;
 import org.dimchik.util.DbUtil;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ class ProductDaoImplTest {
         when(resultSet.getString("description")).thenReturn("Description");
         when(resultSet.getTimestamp("creation_date")).thenReturn(Timestamp.valueOf(LocalDateTime.of(2023, 1, 1, 12, 0)));
 
-        ProductDaoImpl dao = new ProductDaoImpl(dbUtil);
+        ProductDao dao = new ProductDaoImpl(dbUtil);
         Product product = dao.findById(1L);
 
         assertNotNull(product);
@@ -67,7 +68,7 @@ class ProductDaoImplTest {
         when(preparedStatement.executeQuery()).thenReturn(resultSet);
         when(resultSet.next()).thenReturn(false);
 
-        ProductDaoImpl dao = new ProductDaoImpl(dbUtil);
+        ProductDao dao = new ProductDaoImpl(dbUtil);
         Product product = dao.findById(99L);
 
         assertNull(product);
@@ -90,7 +91,7 @@ class ProductDaoImplTest {
                 Timestamp.valueOf(LocalDateTime.of(2023, 1, 2, 13, 0))
         );
 
-        ProductDaoImpl dao = new ProductDaoImpl(dbUtil);
+        ProductDao dao = new ProductDaoImpl(dbUtil);
         List<Product> products = dao.findAll();
 
         assertEquals(2, products.size());

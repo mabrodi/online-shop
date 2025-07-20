@@ -1,4 +1,4 @@
-package org.dimchik.servlet;
+package org.dimchik.web.servlet.auth;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;

@@ -18,7 +18,7 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("User cannot be null");
         }
         HttpSession session = req.getSession();
-        session.setMaxInactiveInterval(30 * 60); // 30 min
+        session.setMaxInactiveInterval(4 * 60 * 60); // 4 hour
         session.setAttribute("user", user);
     }
 
