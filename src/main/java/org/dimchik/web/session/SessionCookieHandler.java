@@ -28,6 +28,7 @@ public class SessionCookieHandler {
         Cookie cookie = new Cookie(cookieName, sessionId);
         cookie.setHttpOnly(true);
         cookie.setMaxAge(cookieMaxAge);
+        cookie.setPath("/");
         res.addCookie(cookie);
     }
 

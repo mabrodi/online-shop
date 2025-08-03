@@ -44,18 +44,19 @@ public class UpdateProductServlet extends HttpServlet {
             data.put("currentUser", session.getUser());
             data.put("sizeCart", session.getCart().size());
             data.put("product", productService.getProductById(id));
+            data.put("contextPath", req.getContextPath());
 
             String html = templateRenderer.processTemplate("productFormUpdate.html", data);
             HtmlResponseWriter.renderHtml(resp, html);
         } catch (IllegalArgumentException e) {
-            errorViewRenderer.renderBadRequest(resp, "Invalid product id");
+            errorViewRenderer.renderBadRequest(req, resp, "Invalid product id");
         } catch (Exception e) {
-            errorViewRenderer.renderInternalServerError(resp, e);
+            errorViewRenderer.renderInternalServerError(req, resp, e);
         }
     }
 
     @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             long id = Long.parseLong(req.getPathInfo().substring(1));
             String name = req.getParameter("name");
@@ -65,9 +66,9 @@ public class UpdateProductServlet extends HttpServlet {
             productService.updateProduct(id, name, price, description);
             resp.setStatus(HttpServletResponse.SC_OK);
         } catch (IllegalArgumentException e) {
-            errorViewRenderer.renderBadRequest(resp, "Invalid input: " + e.getMessage());
+            errorViewRenderer.renderBadRequest(req, resp, "Invalid input: " + e.getMessage());
         } catch (Exception e) {
-            errorViewRenderer.renderInternalServerError(resp, e);
+            errorViewRenderer.renderInternalServerError(req, resp, e);
         }
     }
 }

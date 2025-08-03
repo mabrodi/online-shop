@@ -36,6 +36,7 @@ class LogoutServletTest {
     @Test
     void doGetShouldLogoutAndClearCookieAndRedirect() throws Exception {
         when(sessionCookieHandler.extractId(request)).thenReturn("TOKEN_123");
+        when(request.getContextPath()).thenReturn("");
 
         servlet.doGet(request, response);
 

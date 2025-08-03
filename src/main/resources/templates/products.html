@@ -4,10 +4,10 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>List Products</h1>
-        <a href="/products/add" class="btn btn-success">Add product</a>
+        <a href="${contextPath}/products/add" class="btn btn-success">Add product</a>
     </div>
 
-    <form method="get" action="/products">
+    <form method="get" action="${contextPath}/products">
         <div class="row mb-4 g-3 align-items-center">
             <div class="col-auto">
                 <input type="text" class="form-control" name="search" placeholder="Search..." value="${query!}">
@@ -28,7 +28,7 @@
                         <p class="card-text text-muted">Creation date: ${product.creationDateFormatted}</p>
                     </div>
                     <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end">
-                        <a href="/products/update/${product.id}" class="btn btn-outline-primary btn-sm me-2">
+                        <a href="${contextPath}/products/update/${product.id}" class="btn btn-outline-primary btn-sm me-2">
                             <i class="bi bi-pencil"></i> Update
                         </a>
                         <button class="btn btn-outline-danger btn-sm delete-btn me-2" data-id="${product.id}">
@@ -50,12 +50,12 @@
 
             if (!confirm("Are you sure you want to delete this product?")) return;
 
-            fetch("/products/delete/" + id, {
+            fetch("${contextPath}/products/delete/" + id, {
                 method: 'DELETE'
             })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = "/products";
+                        window.location.href = "${contextPath}/products";
                     } else {
                         alert("Error delete: " + response.status);
                     }
@@ -71,12 +71,12 @@
         button.addEventListener('click', function () {
             const id = this.dataset.id;
 
-            fetch("/cart/add/" + id, {
+            fetch("${contextPath}/cart/add/" + id, {
                 method: 'POST'
             })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = "/products";
+                        window.location.href = "${contextPath}/products";
                     } else {
                         alert("Error add: " + response.status);
                     }

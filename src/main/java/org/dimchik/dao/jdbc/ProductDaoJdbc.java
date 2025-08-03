@@ -118,6 +118,7 @@ public class ProductDaoJdbc implements ProductDao {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException("Failed to update product", e);
         }
     }

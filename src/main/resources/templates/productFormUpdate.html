@@ -8,7 +8,7 @@
                     <h2 class="card-title h4 mb-0" id="formTitle">Update product</h2>
                 </div>
                 <div class="card-body">
-                    <form id="productForm" method="POST" action="/products/update/${product.id}">
+                    <form id="productForm" method="POST" action="${contextPath}/products/update/${product.id}">
                         <div class="mb-3" id="idGroup">
                             <label class="form-label">ID ${product.id}</label>
                         </div>
@@ -48,11 +48,11 @@
             const data = new URLSearchParams(new FormData(form));
 
             fetch(form.action, {
-                method: 'PUT',
+                method: 'POST',
                 body: data
             }).then(res => {
                 if (res.ok) {
-                    window.location.href = "/products";
+                    window.location.href = "${contextPath}/products";
                 } else {
                     alert("Update failed");
                 }

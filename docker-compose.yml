@@ -16,20 +16,6 @@ services:
     networks:
       - myshop_network
 
-  app:
-    build: .
-    container_name: online_shop_app
-    depends_on:
-      - db
-    ports:
-      - "7080:7080"
-    environment:
-      DB_URL: jdbc:postgresql://db:5432/online-shop
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-    networks:
-      - myshop_network
-
 volumes:
   pgdata_myshop:
 

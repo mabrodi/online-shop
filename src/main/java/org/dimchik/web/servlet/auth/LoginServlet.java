@@ -12,6 +12,8 @@ import org.dimchik.web.view.TemplateRenderer;
 import org.dimchik.web.session.SessionCookieHandler;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginServlet extends HttpServlet {
 
@@ -39,7 +41,9 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String html = templateRenderer.processTemplate("login.html");
+        Map<String, Object> data = new HashMap<>();
+        data.put("contextPath", req.getContextPath());
+        String html = templateRenderer.processTemplate("login.html", data);
         HtmlResponseWriter.renderHtml(resp, html);
     }
 
@@ -51,10 +55,10 @@ public class LoginServlet extends HttpServlet {
         try {
             String token = securityService.login(email, password);
             sessionCookieHandler.set(resp, token);
-            resp.sendRedirect("/products");
+            resp.sendRedirect(req.getContextPath() + "/products");
 
         } catch (IllegalArgumentException e) {
-            errorViewRenderer.renderBadRequest(resp, "Invalid email or password");
+            errorViewRenderer.renderBadRequest(req, resp, "Invalid email or password");
         }
     }
 }

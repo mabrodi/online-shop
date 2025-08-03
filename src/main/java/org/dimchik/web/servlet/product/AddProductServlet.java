@@ -41,6 +41,7 @@ public class AddProductServlet extends HttpServlet {
         Map<String, Object> data = new HashMap<>();
         data.put("currentUser", session.getUser());
         data.put("sizeCart", session.getCart().size());
+        data.put("contextPath", req.getContextPath());
 
         String html = templateRenderer.processTemplate("productFormCreate.html", data);
         HtmlResponseWriter.renderHtml(resp, html);
@@ -54,12 +55,12 @@ public class AddProductServlet extends HttpServlet {
             String description = req.getParameter("description");
 
             productService.addProduct(name, price, description);
-            resp.sendRedirect("/products");
+            resp.sendRedirect(req.getContextPath() + "/products");
 
         } catch (IllegalArgumentException e) {
-            errorViewRenderer.renderBadRequest(resp, "Invalid input: " + e.getMessage());
+            errorViewRenderer.renderBadRequest(req, resp, "Invalid input: " + e.getMessage());
         } catch (Exception e) {
-            errorViewRenderer.renderInternalServerError(resp, e);
+            errorViewRenderer.renderInternalServerError(req, resp, e);
         }
     }
 }

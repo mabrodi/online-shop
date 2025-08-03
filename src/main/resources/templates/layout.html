@@ -12,13 +12,13 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-success mb-4">
     <div class="container">
-        <a class="navbar-brand" href="/">Products</a>
+        <a class="navbar-brand" href="${contextPath}/">Products</a>
         <div class="d-flex">
             <#if currentUser??>
-            <a class="btn btn-success" href="/cart"><i class="bi bi-cart"></i> Cart ${sizeCart!'0'}</a>
+            <a class="btn btn-success" href="${contextPath}/cart"><i class="bi bi-cart"></i> Cart ${sizeCart!'0'}</a>
 
             <span class="navbar-text me-3">Logged in as: ${currentUser.name}</span>
-            <form method="get" action="/logout">
+            <form method="get" action="${contextPath}/logout">
                 <button type="submit" class="btn btn-danger">Logout</button>
             </form>
         </#if>

@@ -32,6 +32,7 @@ public class CartServlet extends HttpServlet {
         data.put("currentUser", session.getUser());
         data.put("sizeCart", session.getCart().size());
         data.put("products", session.getCart().getProducts());
+        data.put("contextPath", req.getContextPath());
 
         String html = templateRenderer.processTemplate("carts.html", data);
         HtmlResponseWriter.renderHtml(resp, html);

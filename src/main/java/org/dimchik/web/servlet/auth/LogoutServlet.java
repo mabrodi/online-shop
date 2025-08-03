@@ -29,6 +29,6 @@ public class LogoutServlet extends HttpServlet {
         securityService.logout(token);
         sessionCookieHandler.clear(resp);
 
-        resp.sendRedirect("/login");
+        resp.sendRedirect(req.getContextPath() + "/login");
     }
 }

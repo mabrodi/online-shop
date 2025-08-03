@@ -31,8 +31,10 @@ public class AuthFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
 
         String path = request.getRequestURI();
+        String context = request.getContextPath();
+        String relativePath = path.substring(context.length());
 
-        if ("/login".equals(path) || "/login.html".equals(path)) {
+        if (relativePath.equals("/login") || relativePath.equals("/login.html")) {
             chain.doFilter(req, res);
             return;
         }
@@ -45,6 +47,6 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        response.sendRedirect("/login");
+        response.sendRedirect(context + "/login");
     }
 }

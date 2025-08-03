@@ -1,5 +1,6 @@
 package org.dimchik.web.view;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,10 +29,12 @@ class ErrorViewRendererTest {
     @Test
     public void renderHtmlErrorWithBadRequestStatus() throws IOException {
         HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getContextPath()).thenReturn("");
         StringWriter stringWriter = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
 
-        errorViewRenderer.renderBadRequest(response, "Hello!");
+        errorViewRenderer.renderBadRequest(request, response, "Hello!");
 
         assertTrue(stringWriter.toString().contains("Hello!"));
         verify(response).setContentType("text/html;charset=utf-8");
@@ -41,10 +44,12 @@ class ErrorViewRendererTest {
     @Test
     public void renderHtmlErrorWithIllegalArgumentException() throws IOException {
         HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getContextPath()).thenReturn("");
         StringWriter stringWriter = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
 
-        errorViewRenderer.renderInternalServerError(response, new IllegalArgumentException("test"));
+        errorViewRenderer.renderInternalServerError(request, response, new IllegalArgumentException("test"));
 
         assertTrue(stringWriter.toString().contains("test"));
         verify(response).setContentType("text/html;charset=utf-8");

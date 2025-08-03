@@ -72,6 +72,7 @@ class AddProductServletTest {
         when(request.getParameter("name")).thenReturn("TestName");
         when(request.getParameter("price")).thenReturn("150.0");
         when(request.getParameter("description")).thenReturn("text");
+        when(request.getContextPath()).thenReturn("");
 
         servlet.doPost(request, response);
 
@@ -86,6 +87,6 @@ class AddProductServletTest {
 
         servlet.doPost(request, response);
 
-        verify(errorViewRenderer).renderBadRequest(eq(response), contains("Invalid input:"));
+        verify(errorViewRenderer).renderBadRequest(eq(request), eq(response), contains("Invalid input:"));
     }
 }

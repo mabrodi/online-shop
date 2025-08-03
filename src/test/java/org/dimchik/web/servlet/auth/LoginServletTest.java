@@ -14,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
@@ -46,7 +48,10 @@ class LoginServletTest {
         StringWriter writer = new StringWriter();
 
         when(resp.getWriter()).thenReturn(new PrintWriter(writer));
-        when(templateRenderer.processTemplate("login.html")).thenReturn("LOGIN FORM");
+        when(req.getContextPath()).thenReturn("");
+        Map<String, Object> data = new HashMap<>();
+        data.put("contextPath", "");
+        when(templateRenderer.processTemplate("login.html", data)).thenReturn("LOGIN FORM");
 
         servlet.doGet(req, resp);
 
@@ -58,6 +63,7 @@ class LoginServletTest {
         when(req.getParameter("email")).thenReturn("user@example.com");
         when(req.getParameter("password")).thenReturn("pass123");
         when(securityService.login("user@example.com", "pass123")).thenReturn("TOKEN_123");
+        when(req.getContextPath()).thenReturn("");
 
 
         servlet.doPost(req, resp);
@@ -76,6 +82,6 @@ class LoginServletTest {
 
         servlet.doPost(req, resp);
 
-        verify(errorViewRenderer).renderBadRequest(resp, "Invalid email or password");
+        verify(errorViewRenderer).renderBadRequest(req, resp, "Invalid email or password");
     }
 }

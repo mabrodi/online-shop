@@ -65,27 +65,27 @@ class UpdateProductServletTest {
     }
 
     @Test
-    void doPutUpdatesProductAndReturnsOk() throws Exception {
+    void doPostUpdatesProductAndReturnsOk() throws Exception {
         when(request.getPathInfo()).thenReturn("/5");
         when(request.getParameter("name")).thenReturn("UpdatedName");
         when(request.getParameter("price")).thenReturn("800.0");
         when(request.getParameter("description")).thenReturn("New description");
 
-        servlet.doPut(request, response);
+        servlet.doPost(request, response);
 
         verify(productService).updateProduct(5L, "UpdatedName", 800.0, "New description");
         verify(response).setStatus(HttpServletResponse.SC_OK);
     }
 
     @Test
-    void doPutHandlesInvalidPrice() throws Exception {
+    void doPostHandlesInvalidPrice() throws Exception {
         when(request.getPathInfo()).thenReturn("/5");
         when(request.getParameter("name")).thenReturn("UpdatedName");
         when(request.getParameter("price")).thenReturn("bad-price");
 
-        servlet.doPut(request, response);
+        servlet.doPost(request, response);
 
-        verify(errorViewRenderer).renderBadRequest(eq(response), contains("Invalid input"));
+        verify(errorViewRenderer).renderBadRequest(eq(request), eq(response), contains("Invalid input"));
     }
 
     @Test
@@ -95,6 +95,6 @@ class UpdateProductServletTest {
 
         servlet.doGet(request, response);
 
-        verify(errorViewRenderer).renderBadRequest(eq(response), eq("Invalid product id"));
+        verify(errorViewRenderer).renderBadRequest(eq(request), eq(response), eq("Invalid product id"));
     }
 }

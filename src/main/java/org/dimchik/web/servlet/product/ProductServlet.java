@@ -37,6 +37,7 @@ public class ProductServlet extends HttpServlet {
 
         data.put("currentUser", session.getUser());
         data.put("sizeCart", session.getCart().size());
+        data.put("contextPath", req.getContextPath());
 
         if (search != null && !search.isBlank()) {
             data.put("products", productService.searchProducts(search));

@@ -40,12 +40,12 @@
 
             if (!confirm("Are you sure you want to remove this product from your cart?")) return;
 
-            fetch("/cart/delete/" + productId, {
+            fetch("${contextPath}/cart/delete/" + productId, {
                 method: 'DELETE'
             })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = "/cart";
+                        window.location.href = "${contextPath}/cart";
                     } else {
                         alert("Error while removing from cart: " + response.status);
                     }
@@ -62,12 +62,12 @@
 
             if (!confirm("Are you sure you want to clean this products from your cart?")) return;
 
-            fetch("/cart/clean", {
+            fetch("${contextPath}/cart/clean", {
                 method: 'DELETE'
             })
                 .then(response => {
                     if (response.ok) {
-                        window.location.href = "/cart";
+                        window.location.href = "${contextPath}/cart";
                     } else {
                         alert("Error while cleaning from cart: " + response.status);
                     }
