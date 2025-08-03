@@ -1,12 +1,18 @@
 package org.dimchik.service;
 
-import org.dimchik.entity.Cart;
+import org.dimchik.entity.Product;
+import org.dimchik.context.Session;
 
 import java.util.List;
 
 public interface CartService {
-    List<Cart> getAllCartsByUserId(long userId);
-    void addCart(long userId, long productId);
-    void deleteCart(long id);
-    void cleanCartByUserId(long userId);
+    void addProduct(Session session, long productId);
+
+    void removeProduct(Session session, long productId);
+
+    void clear(Session session);
+
+    List<Product> getProducts(Session session);
+
+    int size(Session session);
 }

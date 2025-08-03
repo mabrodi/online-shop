@@ -2,9 +2,9 @@ package org.dimchik.web.servlet.cart;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dimchik.entity.User;
-import org.dimchik.service.AuthService;
+import org.dimchik.context.Session;
 import org.dimchik.service.CartService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -16,47 +16,43 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AddCartServletTest {
+    private AddCartServlet servlet;
 
     @Mock
-    AuthService authService;
+    private CartService cartService;
     @Mock
-    CartService cartService;
+    private HttpServletRequest request;
     @Mock
-    HttpServletRequest request;
+    private HttpServletResponse response;
     @Mock
-    HttpServletResponse response;
+    private Session session;
+
+    @BeforeEach
+    void setUp() {
+        servlet = new AddCartServlet(cartService);
+    }
 
     @Test
-    public void doPostAddCartAndReturnsOk() throws Exception {
-        AddCartServlet servlet = new AddCartServlet(authService, cartService);
-
-        when(request.getPathInfo()).thenReturn("/1");
-        User user = new User();
-        user.setId(1);
-        user.setName("test");
-        user.setEmail("test@example.com");
-        user.setPassword("test");
-
-        when(authService.getCurrentUser(request)).thenReturn(user);
+    void doPostShouldAddProductToCartAndReturnOk() throws Exception {
+        when(request.getAttribute("currentSession")).thenReturn(session);
+        when(request.getPathInfo()).thenReturn("/42");
 
         servlet.doPost(request, response);
 
-        verify(cartService).addCart(user.getId(), 1);
+        verify(cartService).addProduct(session, 42L);
         verify(response).setStatus(HttpServletResponse.SC_OK);
     }
 
     @Test
-    public void doAddHandlesInvalidProductId() throws Exception {
-        AddCartServlet servlet = new AddCartServlet(authService, cartService);
+    void doPostShouldThrowExceptionOnInvalidProductId() {
+        when(request.getAttribute("currentSession")).thenReturn(session);
+        when(request.getPathInfo()).thenReturn("/abc");
 
-        when(request.getPathInfo()).thenReturn("/not-a-number");
-
-
-        IllegalArgumentException thrown = assertThrows(
+        IllegalArgumentException exception = assertThrows(
                 IllegalArgumentException.class,
                 () -> servlet.doPost(request, response)
         );
 
-        assertTrue(thrown.getMessage().contains("Invalid product id: not-a-number"));
+        assertTrue(exception.getMessage().contains("Invalid product id: abc"));
     }
 }

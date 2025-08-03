@@ -2,11 +2,12 @@ package org.dimchik.web.servlet.cart;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.dimchik.context.Cart;
+import org.dimchik.context.Session;
+import org.dimchik.entity.Product;
 import org.dimchik.entity.User;
-import org.dimchik.service.AuthService;
-import org.dimchik.service.CartService;
-import org.dimchik.util.TemplateEngine;
-import org.dimchik.web.servlet.product.ProductServlet;
+import org.dimchik.web.view.TemplateRenderer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,50 +15,46 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CartServletTest {
-
     @Mock
-    AuthService authService;
+    private TemplateRenderer templateRenderer;
     @Mock
-    CartService cartService;
+    private HttpServletRequest request;
     @Mock
-    TemplateEngine templateEngine;
+    private HttpServletResponse response;
     @Mock
-    HttpServletRequest request;
+    private Session session;
     @Mock
-    HttpServletResponse response;
+    private Cart cart;
+    @Mock
+    private User user;
 
     @Test
-    public void doGetWriteHtml() throws Exception {
-        CartServlet servlet = new CartServlet(authService, cartService, templateEngine);
+    void doGetShouldRenderCartTemplate() throws Exception {
+        when(request.getAttribute("currentSession")).thenReturn(session);
+        when(session.getUser()).thenReturn(user);
+        when(session.getCart()).thenReturn(cart);
+        when(cart.size()).thenReturn(1);
+        when(cart.getProducts()).thenReturn(Collections.singletonList(new Product()));
 
-        StringWriter sw = new StringWriter();
-        when(response.getWriter()).thenReturn(new PrintWriter(sw));
-        when(templateEngine.processTemplate(anyString(), anyMap())).thenReturn("HTML");
+        StringWriter stringWriter = new StringWriter();
+        when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
+        when(templateRenderer.processTemplate(eq("carts.html"), anyMap())).thenReturn("CART HTML");
 
-        User user = new User();
-        user.setId(1);
-        user.setName("test");
-        user.setEmail("test@example.com");
-        user.setPassword("test");
-
-        when(authService.getCurrentUser(request)).thenReturn(user);
-
+        CartServlet servlet = new CartServlet(templateRenderer);
         servlet.doGet(request, response);
 
-        verify(cartService).getAllCartsByUserId(1);
-        verify(templateEngine).processTemplate(eq("carts.html"), anyMap());
-        verify(response).setContentType("text/html;charset=utf-8");
-        verify(response).setStatus(HttpServletResponse.SC_OK);
-        assertTrue(sw.toString().contains("HTML"));
+        verify(templateRenderer).processTemplate(eq("carts.html"), anyMap());
+        assertTrue(stringWriter.toString().contains("CART HTML"));
     }
 
 }

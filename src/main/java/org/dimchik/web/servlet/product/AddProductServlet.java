@@ -1,36 +1,49 @@
 package org.dimchik.web.servlet.product;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dimchik.service.AuthService;
+import org.dimchik.config.ServiceLocator;
 import org.dimchik.service.ProductService;
-import org.dimchik.util.ErrorRendererUtil;
-import org.dimchik.util.RenderHtmlUtil;
-import org.dimchik.util.TemplateEngine;
+import org.dimchik.context.Session;
+import org.dimchik.web.view.ErrorViewRenderer;
+import org.dimchik.web.view.HtmlResponseWriter;
+import org.dimchik.web.view.TemplateRenderer;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AddProductServlet extends HttpServlet {
-    private final AuthService authService;
     private final ProductService productService;
-    private final TemplateEngine templateEngine;
+    private final TemplateRenderer templateRenderer;
+    private final ErrorViewRenderer errorViewRenderer;
 
-    public AddProductServlet(AuthService authService, ProductService productService, TemplateEngine templateEngine) {
-        this.authService = authService;
+    public AddProductServlet(ProductService productService, TemplateRenderer templateRenderer, ErrorViewRenderer errorViewRenderer) {
         this.productService = productService;
-        this.templateEngine = templateEngine;
+        this.templateRenderer = templateRenderer;
+        this.errorViewRenderer = errorViewRenderer;
+    }
+
+    public AddProductServlet() {
+        this(
+                ServiceLocator.getService(ProductService.class),
+                ServiceLocator.getService(TemplateRenderer.class),
+                ServiceLocator.getService(ErrorViewRenderer.class)
+        );
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        Map<String, Object> data = new HashMap<>();
-        data.put("currentUser", authService.getCurrentUser(req));
+        Session session = (Session) req.getAttribute("currentSession");
 
-        String html = templateEngine.processTemplate("productFormCreate.html", data);
-        RenderHtmlUtil.renderHtml(resp, html);
+        Map<String, Object> data = new HashMap<>();
+        data.put("currentUser", session.getUser());
+        data.put("sizeCart", session.getCart().size());
+
+        String html = templateRenderer.processTemplate("productFormCreate.html", data);
+        HtmlResponseWriter.renderHtml(resp, html);
     }
 
     @Override
@@ -44,9 +57,9 @@ public class AddProductServlet extends HttpServlet {
             resp.sendRedirect("/products");
 
         } catch (IllegalArgumentException e) {
-            ErrorRendererUtil.render(resp, "Invalid input: " + e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
+            errorViewRenderer.renderBadRequest(resp, "Invalid input: " + e.getMessage());
         } catch (Exception e) {
-            ErrorRendererUtil.render(resp, e);
+            errorViewRenderer.renderInternalServerError(resp, e);
         }
     }
 }

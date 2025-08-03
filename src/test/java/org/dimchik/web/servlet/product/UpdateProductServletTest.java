@@ -2,10 +2,14 @@ package org.dimchik.web.servlet.product;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.dimchik.context.Cart;
+import org.dimchik.context.Session;
 import org.dimchik.entity.Product;
-import org.dimchik.service.AuthService;
+import org.dimchik.entity.User;
 import org.dimchik.service.ProductService;
-import org.dimchik.util.TemplateEngine;
+import org.dimchik.web.view.ErrorViewRenderer;
+import org.dimchik.web.view.TemplateRenderer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,74 +18,83 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UpdateProductServletTest {
-    @Mock
-    AuthService authService;
-    @Mock
-    ProductService productService;
-    @Mock
-    TemplateEngine templateEngine;
-    @Mock
-    HttpServletRequest request;
-    @Mock
-    HttpServletResponse response;
+    private UpdateProductServlet servlet;
 
+    @Mock ProductService productService;
+    @Mock TemplateRenderer templateRenderer;
+    @Mock ErrorViewRenderer errorViewRenderer;
+    @Mock HttpServletRequest request;
+    @Mock HttpServletResponse response;
+    @Mock Session session;
+    @Mock Cart cart;
+    @Mock User user;
+
+    @BeforeEach
+    void setUp() {
+        servlet = new UpdateProductServlet(productService, templateRenderer, errorViewRenderer);
+    }
 
     @Test
-    public void doGetRendersUpdateForm() throws Exception {
-        UpdateProductServlet servlet = new UpdateProductServlet(authService, productService, templateEngine);
+    void doGetRendersUpdateForm() throws Exception {
+        when(request.getAttribute("currentSession")).thenReturn(session);
+        when(session.getUser()).thenReturn(user);
+        when(session.getCart()).thenReturn(cart);
+        when(cart.size()).thenReturn(3);
 
         when(request.getPathInfo()).thenReturn("/8");
         Product product = new Product();
         when(productService.getProductById(8L)).thenReturn(product);
-        when(templateEngine.processTemplate(anyString(), anyMap())).thenReturn("UPDATE_FORM");
+        when(templateRenderer.processTemplate(anyString(), anyMap())).thenReturn("UPDATE_FORM");
+
         StringWriter sw = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(sw));
 
         servlet.doGet(request, response);
 
         verify(productService).getProductById(8L);
-        verify(templateEngine).processTemplate(eq("productFormUpdate.html"), anyMap());
+        verify(templateRenderer).processTemplate(eq("productFormUpdate.html"), anyMap());
         assertTrue(sw.toString().contains("UPDATE_FORM"));
-    }
-
-    @Test
-    public void doPutUpdatesProductAndReturnsOk() throws Exception {
-        UpdateProductServlet servlet = new UpdateProductServlet(authService, productService, templateEngine);
-
-        when(request.getPathInfo()).thenReturn("/5");
-        when(request.getParameter("name")).thenReturn("UpdatedName");
-        when(request.getParameter("price")).thenReturn("800.0");
-        when(request.getParameter("description")).thenReturn("text");
-
-        servlet.doPut(request, response);
-
-        verify(productService).updateProduct(5, "UpdatedName", 800.0, "text");
+        verify(response).setContentType("text/html;charset=utf-8");
         verify(response).setStatus(HttpServletResponse.SC_OK);
     }
 
     @Test
-    public void doPutHandlesInvalidInput() throws Exception {
-        UpdateProductServlet servlet = new UpdateProductServlet(authService, productService, templateEngine);
-
-        StringWriter stringWriter = new StringWriter();
-
-        when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
+    void doPutUpdatesProductAndReturnsOk() throws Exception {
         when(request.getPathInfo()).thenReturn("/5");
-        when(request.getParameter("name")).thenReturn("TV");
-        when(request.getParameter("price")).thenReturn("not-a-number");
+        when(request.getParameter("name")).thenReturn("UpdatedName");
+        when(request.getParameter("price")).thenReturn("800.0");
+        when(request.getParameter("description")).thenReturn("New description");
 
         servlet.doPut(request, response);
 
-        assertTrue(stringWriter.toString().contains("Invalid input"));
-        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        verify(productService).updateProduct(5L, "UpdatedName", 800.0, "New description");
+        verify(response).setStatus(HttpServletResponse.SC_OK);
+    }
+
+    @Test
+    void doPutHandlesInvalidPrice() throws Exception {
+        when(request.getPathInfo()).thenReturn("/5");
+        when(request.getParameter("name")).thenReturn("UpdatedName");
+        when(request.getParameter("price")).thenReturn("bad-price");
+
+        servlet.doPut(request, response);
+
+        verify(errorViewRenderer).renderBadRequest(eq(response), contains("Invalid input"));
+    }
+
+    @Test
+    void doGetHandlesInvalidProductId() throws Exception {
+        when(request.getPathInfo()).thenReturn("/not-a-number");
+        when(request.getAttribute("currentSession")).thenReturn(session);
+
+        servlet.doGet(request, response);
+
+        verify(errorViewRenderer).renderBadRequest(eq(response), eq("Invalid product id"));
     }
 }

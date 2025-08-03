@@ -2,11 +2,13 @@ package org.dimchik.web.servlet.product;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dimchik.service.AuthService;
+import org.dimchik.context.Cart;
+import org.dimchik.context.Session;
+import org.dimchik.entity.User;
 import org.dimchik.service.ProductService;
-import org.dimchik.service.impl.AuthServiceImpl;
-import org.dimchik.service.impl.ProductServiceImpl;
-import org.dimchik.util.TemplateEngine;
+import org.dimchik.web.view.ErrorViewRenderer;
+import org.dimchik.web.view.TemplateRenderer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -15,37 +17,51 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AddProductServletTest {
+    private AddProductServlet servlet;
 
     @Mock
     ProductService productService;
     @Mock
-    AuthService authService;
+    TemplateRenderer templateRenderer;
     @Mock
-    TemplateEngine templateEngine;
+    ErrorViewRenderer errorViewRenderer;
     @Mock
     HttpServletRequest request;
     @Mock
     HttpServletResponse response;
+    @Mock
+    Session session;
+    @Mock
+    Cart cart;
+    @Mock
+    User user;
+
+    @BeforeEach
+    void setUp() {
+        servlet = new AddProductServlet(productService, templateRenderer, errorViewRenderer);
+    }
 
     @Test
     public void doGetWritesCreateForm() throws Exception {
-        AddProductServlet servlet = new  AddProductServlet(authService, productService, templateEngine);
+        when(request.getAttribute("currentSession")).thenReturn(session);
+        when(session.getUser()).thenReturn(user);
+        when(session.getCart()).thenReturn(cart);
+        when(cart.size()).thenReturn(1);
 
         StringWriter stringWriter = new StringWriter();
         when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
-        when(templateEngine.processTemplate(anyString(), anyMap())).thenReturn("FORM");
+        when(templateRenderer.processTemplate(anyString(), anyMap())).thenReturn("FORM");
 
         servlet.doGet(request, response);
 
-        verify(templateEngine).processTemplate(eq("productFormCreate.html"), anyMap());
+        verify(templateRenderer).processTemplate(eq("productFormCreate.html"), anyMap());
         verify(response).setContentType("text/html;charset=utf-8");
         verify(response).setStatus(HttpServletResponse.SC_OK);
         assertTrue(stringWriter.toString().contains("FORM"));
@@ -53,8 +69,6 @@ class AddProductServletTest {
 
     @Test
     public void doPostAddsProductAndRedirects() throws Exception {
-        AddProductServlet servlet = new  AddProductServlet(authService, productService, templateEngine);
-
         when(request.getParameter("name")).thenReturn("TestName");
         when(request.getParameter("price")).thenReturn("150.0");
         when(request.getParameter("description")).thenReturn("text");
@@ -67,17 +81,11 @@ class AddProductServletTest {
 
     @Test
     public void doPostHandlesInvalidPriceGracefully() throws Exception {
-        AddProductServlet servlet = new  AddProductServlet(authService, productService, templateEngine);
-
-        StringWriter stringWriter = new StringWriter();
-        when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
-
         when(request.getParameter("name")).thenReturn("TestName");
         when(request.getParameter("price")).thenReturn("invalid");
 
         servlet.doPost(request, response);
 
-        assertTrue(stringWriter.toString().contains("Invalid input"));
-        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        verify(errorViewRenderer).renderBadRequest(eq(response), contains("Invalid input:"));
     }
 }

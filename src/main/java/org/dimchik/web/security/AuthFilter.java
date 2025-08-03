@@ -3,16 +3,24 @@ package org.dimchik.web.security;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dimchik.service.AuthService;
+import org.dimchik.config.ServiceLocator;
+import org.dimchik.service.SecurityService;
+import org.dimchik.web.session.SessionCookieHandler;
 
 import java.io.IOException;
 
 public class AuthFilter implements Filter {
 
-    private final AuthService authService;
+    private final SecurityService securityService;
+    private final SessionCookieHandler sessionCookieHandler;
 
-    public AuthFilter(AuthService authService) {
-        this.authService = authService;
+    public AuthFilter(SecurityService securityService, SessionCookieHandler sessionCookieHandler) {
+        this.securityService = securityService;
+        this.sessionCookieHandler = sessionCookieHandler;
+    }
+
+    public AuthFilter() {
+        this(ServiceLocator.getService(SecurityService.class), ServiceLocator.getService(SessionCookieHandler.class));
     }
 
     @Override
@@ -29,7 +37,10 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        if (authService.isLoggedIn(request)) {
+        String token = sessionCookieHandler.extractId(request);
+        if (securityService.isLoggable(token)) {
+            request.setAttribute("currentSession", securityService.getCurrentSession(token));
+
             chain.doFilter(req, res);
             return;
         }

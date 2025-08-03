@@ -3,8 +3,10 @@ package org.dimchik.web.servlet.auth;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.dimchik.service.AuthService;
-import org.dimchik.service.impl.AuthServiceImpl;
+import org.dimchik.service.SecurityService;
+import org.dimchik.service.base.SecurityServiceBase;
+import org.dimchik.web.session.SessionCookieHandler;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,34 +16,31 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LogoutServletTest {
+
+    private LogoutServlet servlet;
+
     @Mock
-    HttpServletRequest request;
+    private SecurityService securityService;
     @Mock
-    HttpServletResponse response;
+    private SessionCookieHandler sessionCookieHandler;
+    @Mock
+    private HttpServletRequest request;
+    @Mock
+    private HttpServletResponse response;
 
-    @Test
-    void doGetShouldInvalidateSessionAndRedirect() throws Exception {
-        AuthService authService = new AuthServiceImpl();
-        LogoutServlet servlet = new LogoutServlet(authService);
-
-        HttpSession session = mock(HttpSession.class);
-        when(request.getSession(false)).thenReturn(session);
-
-        servlet.doGet(request, response);
-
-        verify(session).invalidate();
-        verify(response).sendRedirect("/login");
+    @BeforeEach
+    void setUp() {
+        servlet = new LogoutServlet(securityService, sessionCookieHandler);
     }
 
     @Test
-    void doGetShouldRedirectWhenNoSession() throws Exception {
-        AuthService authService = new AuthServiceImpl();
-        LogoutServlet servlet = new LogoutServlet(authService);
-
-        when(request.getSession(false)).thenReturn(null);
+    void doGetShouldLogoutAndClearCookieAndRedirect() throws Exception {
+        when(sessionCookieHandler.extractId(request)).thenReturn("TOKEN_123");
 
         servlet.doGet(request, response);
 
+        verify(securityService).logout("TOKEN_123");
+        verify(sessionCookieHandler).clear(response);
         verify(response).sendRedirect("/login");
     }
 }

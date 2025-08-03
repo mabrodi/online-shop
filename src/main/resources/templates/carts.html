@@ -10,20 +10,20 @@
     </button>
 </div>
 
-<#if carts?size == 0>
+<#if products?size == 0>
 <div class="alert alert-info">Your cart is empty.</div>
 <#else>
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    <#list carts as cart>
+    <#list products as product>
     <div class="col">
         <div class="card h-100 product-card">
             <div class="card-body">
-                <h5 class="card-title">${cart.product.name}</h5>
-                <h4 class="card-price text-success">${cart.product.price} $</h4>
-                <p class="card-text text-muted">Added: ${cart.product.creationDateFormatted!}</p>
+                <h5 class="card-title">${product.name}</h5>
+                <h4 class="card-price text-success">${product.price} $</h4>
+                <p class="card-text text-muted">Added: ${product.creationDateFormatted!}</p>
             </div>
             <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end">
-                <button class="btn btn-outline-danger btn-sm remove-from-cart" data-id="${cart.id}">
+                <button class="btn btn-outline-danger btn-sm remove-from-cart" data-id="${product.id}">
                     <i class="bi bi-trash"></i> Remove
                 </button>
             </div>
@@ -36,11 +36,11 @@
 <script>
     document.querySelectorAll('.remove-from-cart').forEach(button => {
         button.addEventListener('click', function () {
-            const cartId = this.dataset.id;
+            const productId = this.dataset.id;
 
             if (!confirm("Are you sure you want to remove this product from your cart?")) return;
 
-            fetch("/cart/delete/" + cartId, {
+            fetch("/cart/delete/" + productId, {
                 method: 'DELETE'
             })
                 .then(response => {

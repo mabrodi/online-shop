@@ -15,7 +15,7 @@
         <a class="navbar-brand" href="/">Products</a>
         <div class="d-flex">
             <#if currentUser??>
-            <a class="btn btn-success" href="/cart"><i class="bi bi-cart"></i> Cart</a>
+            <a class="btn btn-success" href="/cart"><i class="bi bi-cart"></i> Cart ${sizeCart!'0'}</a>
 
             <span class="navbar-text me-3">Logged in as: ${currentUser.name}</span>
             <form method="get" action="/logout">

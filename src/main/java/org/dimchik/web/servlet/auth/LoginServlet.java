@@ -4,34 +4,43 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dimchik.entity.User;
-import org.dimchik.service.AuthService;
-import org.dimchik.service.UserService;
-import org.dimchik.util.ErrorRendererUtil;
-import org.dimchik.util.RenderHtmlUtil;
-import org.dimchik.util.TemplateEngine;
+import org.dimchik.config.ServiceLocator;
+import org.dimchik.service.SecurityService;
+import org.dimchik.web.view.ErrorViewRenderer;
+import org.dimchik.web.view.HtmlResponseWriter;
+import org.dimchik.web.view.TemplateRenderer;
+import org.dimchik.web.session.SessionCookieHandler;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class LoginServlet extends HttpServlet {
-    private final AuthService authService;
-    private final TemplateEngine templateEngine;
-    private final UserService userService;
 
-    public LoginServlet(AuthService authService,TemplateEngine templateEngine, UserService userService) {
-        this.authService = authService;
-        this.templateEngine = templateEngine;
-        this.userService = userService;
+    private final SecurityService securityService;
+    private final TemplateRenderer templateRenderer;
+    private final ErrorViewRenderer errorViewRenderer;
+    private final SessionCookieHandler sessionCookieHandler;
+
+    public LoginServlet(SecurityService securityService, TemplateRenderer templateRenderer,
+                        ErrorViewRenderer errorViewRenderer, SessionCookieHandler sessionCookieHandler) {
+        this.securityService = securityService;
+        this.templateRenderer = templateRenderer;
+        this.errorViewRenderer = errorViewRenderer;
+        this.sessionCookieHandler = sessionCookieHandler;
     }
 
+    public LoginServlet() {
+        this(
+                ServiceLocator.getService(SecurityService.class),
+                ServiceLocator.getService(TemplateRenderer.class),
+                ServiceLocator.getService(ErrorViewRenderer.class),
+                ServiceLocator.getService(SessionCookieHandler.class)
+        );
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Map<String, Object> data = new HashMap<>();
-        String html = templateEngine.processTemplate("login.html", data);
-        RenderHtmlUtil.renderHtml(resp, html);
+        String html = templateRenderer.processTemplate("login.html");
+        HtmlResponseWriter.renderHtml(resp, html);
     }
 
     @Override
@@ -40,13 +49,12 @@ public class LoginServlet extends HttpServlet {
         String password = req.getParameter("password");
 
         try {
-            User user = userService.login(email, password);
-
-            authService.login(req, user);
+            String token = securityService.login(email, password);
+            sessionCookieHandler.set(resp, token);
             resp.sendRedirect("/products");
 
         } catch (IllegalArgumentException e) {
-            ErrorRendererUtil.render(resp, "Invalid email or password");
+            errorViewRenderer.renderBadRequest(resp, "Invalid email or password");
         }
     }
 }

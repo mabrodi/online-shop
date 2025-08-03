@@ -2,12 +2,11 @@ package org.dimchik.web.servlet.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import org.dimchik.entity.User;
-import org.dimchik.service.AuthService;
-import org.dimchik.service.UserService;
-import org.dimchik.service.impl.AuthServiceImpl;
-import org.dimchik.util.TemplateEngine;
+import org.dimchik.service.SecurityService;
+import org.dimchik.web.session.SessionCookieHandler;
+import org.dimchik.web.view.ErrorViewRenderer;
+import org.dimchik.web.view.TemplateRenderer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -16,76 +15,67 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LoginServletTest {
+    private LoginServlet servlet;
+
     @Mock
-    UserService userService;
+    HttpServletRequest req;
     @Mock
-    TemplateEngine templateEngine;
+    HttpServletResponse resp;
     @Mock
-    HttpServletRequest request;
+    SecurityService securityService;
     @Mock
-    HttpServletResponse response;
+    TemplateRenderer templateRenderer;
+    @Mock
+    ErrorViewRenderer errorViewRenderer;
+    @Mock
+    SessionCookieHandler sessionCookieHandler;
 
-
-    @Test
-    public void doGetWritesCreateForm() throws Exception {
-        AuthService authService =  new AuthServiceImpl();
-        LoginServlet servlet = new LoginServlet(authService, templateEngine, userService);
-
-        StringWriter stringWriter = new StringWriter();
-        when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
-        when(templateEngine.processTemplate(anyString(), anyMap())).thenReturn("FORM");
-
-        servlet.doGet(request, response);
-
-        verify(templateEngine).processTemplate(eq("login.html"), anyMap());
-        verify(response).setContentType("text/html;charset=utf-8");
-        verify(response).setStatus(HttpServletResponse.SC_OK);
-        assertTrue(stringWriter.toString().contains("FORM"));
+    @BeforeEach
+    void setup() {
+        servlet = new LoginServlet(securityService, templateRenderer, errorViewRenderer, sessionCookieHandler);
     }
 
     @Test
-    public void doPostShouldLoginBySessionAndRedirect() throws Exception {
-        AuthService authService =  new AuthServiceImpl();
-        LoginServlet servlet = new LoginServlet(authService, templateEngine, userService);
+    void doGetShouldRenderLoginTemplate() throws Exception {
+        StringWriter writer = new StringWriter();
 
-        User user = new User();
-        when(request.getParameter("email")).thenReturn("email@example.com");
-        when(request.getParameter("password")).thenReturn("11111");
-        when(userService.login("email@example.com", "11111")).thenReturn(user);
+        when(resp.getWriter()).thenReturn(new PrintWriter(writer));
+        when(templateRenderer.processTemplate("login.html")).thenReturn("LOGIN FORM");
 
-        HttpSession session = mock(HttpSession.class);
-        when(request.getSession()).thenReturn(session);
+        servlet.doGet(req, resp);
 
-        servlet.doPost(request, response);
-
-        verify(session).setAttribute("user", user);
-        verify(response).sendRedirect("/products");
+        assertTrue(writer.toString().contains("LOGIN FORM"));
     }
 
     @Test
-    void doPostShouldHandleInvalidLogin() throws Exception {
-        AuthService authService =  new AuthServiceImpl();
-        LoginServlet servlet = new LoginServlet(authService, templateEngine, userService);
+    void doPostShouldLoginAndSetCookieAndRedirect() throws Exception {
+        when(req.getParameter("email")).thenReturn("user@example.com");
+        when(req.getParameter("password")).thenReturn("pass123");
+        when(securityService.login("user@example.com", "pass123")).thenReturn("TOKEN_123");
 
-        when(request.getParameter("email")).thenReturn("email@example.com");
-        when(request.getParameter("password")).thenReturn("wrong");
 
-        when(userService.login(anyString(), anyString()))
-                .thenThrow(new IllegalArgumentException("Invalid credentials"));
+        servlet.doPost(req, resp);
 
-        StringWriter stringWriter = new StringWriter();
-        when(response.getWriter()).thenReturn(new PrintWriter(stringWriter));
+        verify(sessionCookieHandler).set(resp, "TOKEN_123");
+        verify(resp).sendRedirect("/products");
+    }
 
-        servlet.doPost(request, response);
+    @Test
+    void doPostShouldRenderErrorOnInvalidCredentials() throws Exception {
+        when(req.getParameter("email")).thenReturn("wrong@example.com");
+        when(req.getParameter("password")).thenReturn("bad");
 
-        assertTrue(stringWriter.toString().contains("Invalid email or password"));
-        verify(response).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        when(securityService.login(any(), any()))
+                .thenThrow(new IllegalArgumentException("Invalid email or password"));
+
+        servlet.doPost(req, resp);
+
+        verify(errorViewRenderer).renderBadRequest(resp, "Invalid email or password");
     }
 }

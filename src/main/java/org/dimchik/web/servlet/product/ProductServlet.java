@@ -1,35 +1,42 @@
 package org.dimchik.web.servlet.product;
 
-import org.dimchik.service.AuthService;
+import jakarta.servlet.ServletException;
+import org.dimchik.config.ServiceLocator;
 import org.dimchik.service.ProductService;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dimchik.util.RenderHtmlUtil;
-import org.dimchik.util.TemplateEngine;
+import org.dimchik.context.Session;
+import org.dimchik.web.view.HtmlResponseWriter;
+import org.dimchik.web.view.TemplateRenderer;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProductServlet extends HttpServlet {
-    private final AuthService authService;
     private final ProductService productService;
-    private final TemplateEngine templateEngine;
+    private final TemplateRenderer templateRenderer;
 
-    public ProductServlet(AuthService authService, ProductService productService, TemplateEngine templateEngine) {
-        this.authService = authService;
+    public ProductServlet(ProductService productService, TemplateRenderer templateRenderer) {
         this.productService = productService;
-        this.templateEngine = templateEngine;
+        this.templateRenderer = templateRenderer;
+    }
+
+    public ProductServlet() {
+        this(ServiceLocator.getService(ProductService.class), ServiceLocator.getService(TemplateRenderer.class));
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String search = req.getParameter("search");
+        Session session = (Session) req.getAttribute("currentSession");
+
         Map<String, Object> data = new HashMap<>();
 
-        data.put("currentUser", authService.getCurrentUser(req));
+        data.put("currentUser", session.getUser());
+        data.put("sizeCart", session.getCart().size());
 
         if (search != null && !search.isBlank()) {
             data.put("products", productService.searchProducts(search));
@@ -38,7 +45,7 @@ public class ProductServlet extends HttpServlet {
             data.put("products", productService.getAllProducts());
         }
 
-        String html = templateEngine.processTemplate("products.html", data);
-        RenderHtmlUtil.renderHtml(resp, html);
+        String html = templateRenderer.processTemplate("products.html", data);
+        HtmlResponseWriter.renderHtml(resp, html);
     }
 }
