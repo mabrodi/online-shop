@@ -40,3 +40,4 @@ build/
 
 /target
 db.properties
+app.properties
