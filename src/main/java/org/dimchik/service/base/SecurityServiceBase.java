@@ -1,6 +1,5 @@
 package org.dimchik.service.base;
 
-import org.dimchik.config.PropertyReader;
 import org.dimchik.entity.User;
 import org.dimchik.service.SecurityService;
 import org.dimchik.context.Session;
@@ -11,12 +10,13 @@ import java.util.*;
 public class SecurityServiceBase implements SecurityService {
 
     private final int cookieMaxAge;
-    private final Map<String, Session> sessionMap = new HashMap<>();
+    private final Map<String, Session> sessionMap;
     private final UserService userService;
 
     public SecurityServiceBase(UserService userService, int cookieMaxAge) {
         this.userService = userService;
         this.cookieMaxAge = cookieMaxAge;
+        sessionMap = new HashMap<>();
     }
 
     @Override
