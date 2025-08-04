@@ -31,7 +31,7 @@ class CartServiceBaseTest {
     }
 
     @Test
-    void addProduct_shouldAddProductToCart_whenProductExists() {
+    void addProductShouldAddProductToCartWhenProductExists() {
         Product product = new Product();
         product.setId(1L);
         when(productService.getProductById(1L)).thenReturn(product);
@@ -40,20 +40,18 @@ class CartServiceBaseTest {
 
         List<Product> products = session.getCart().getProducts();
         assertEquals(1, products.size());
-        assertEquals(product, products.get(0));
+        assertEquals(product, products.getFirst());
     }
 
     @Test
-    void addProduct_shouldNotAddProduct_whenProductNotFound() {
+    void addProductShouldNotAddProductWhenProductNotFound() {
         when(productService.getProductById(999L)).thenReturn(null);
-
         cartService.addProduct(session, 999L);
-
         assertTrue(session.getCart().getProducts().isEmpty());
     }
 
     @Test
-    void removeProduct_shouldRemoveProductById() {
+    void removeProductShouldRemoveProductById() {
         Product product = new Product();
         product.setId(1L);
         when(productService.getProductById(1L)).thenReturn(product);
@@ -66,7 +64,7 @@ class CartServiceBaseTest {
     }
 
     @Test
-    void clear_shouldRemoveAllProducts() {
+    void clearShouldRemoveAllProducts() {
         Product product1 = new Product(); product1.setId(1L);
         Product product2 = new Product(); product2.setId(2L);
         when(productService.getProductById(1L)).thenReturn(product1);
@@ -81,7 +79,7 @@ class CartServiceBaseTest {
     }
 
     @Test
-    void getProducts_shouldReturnAllProducts() {
+    void getProductsShouldReturnAllProducts() {
         Product product = new Product();
         product.setId(1L);
         when(productService.getProductById(1L)).thenReturn(product);
@@ -90,11 +88,11 @@ class CartServiceBaseTest {
 
         List<Product> products = cartService.getProducts(session);
         assertEquals(1, products.size());
-        assertEquals(product, products.get(0));
+        assertEquals(product, products.getFirst());
     }
 
     @Test
-    void size_shouldReturnNumberOfProductsInCart() {
+    void sizeShouldReturnNumberOfProductsInCart() {
         Product product = new Product();
         product.setId(1L);
         when(productService.getProductById(1L)).thenReturn(product);

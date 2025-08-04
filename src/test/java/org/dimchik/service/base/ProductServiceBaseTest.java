@@ -106,9 +106,7 @@ class ProductServiceBaseTest {
     @Test
     void deleteProductShouldValidateAndDelete() {
         ProductService service = new ProductServiceBase(productDao);
-
         service.deleteProduct(1L);
-
         verify(productDao).delete(1L);
     }
 }

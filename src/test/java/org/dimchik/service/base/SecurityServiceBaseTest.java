@@ -62,9 +62,7 @@ public class SecurityServiceBaseTest {
         user.setEmail("valid@example.com");
 
         when(userService.authenticate(anyString(), anyString())).thenReturn(user);
-
         String token = securityService.login("valid@example.com", "password");
-
         assertTrue(securityService.isLoggable(token));
     }
 

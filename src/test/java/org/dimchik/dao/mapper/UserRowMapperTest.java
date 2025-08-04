@@ -19,7 +19,7 @@ class UserRowMapperTest {
     ResultSet resultSet;
 
     @Test
-    public void mapRowShouldReturnProduct() throws SQLException {
+    public void mapRowShouldReturnUser() throws SQLException {
         when(resultSet.getLong("id")).thenReturn(1L);
         when(resultSet.getString("name")).thenReturn("Admin");
         when(resultSet.getString("email")).thenReturn("test@example.com");
