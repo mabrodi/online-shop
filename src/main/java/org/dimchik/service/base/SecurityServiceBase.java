@@ -10,13 +10,13 @@ import java.util.*;
 public class SecurityServiceBase implements SecurityService {
 
     private final int cookieMaxAge;
-    private final Map<String, Session> sessionMap;
+    private final List<Session> sessionList;
     private final UserService userService;
 
     public SecurityServiceBase(UserService userService, int cookieMaxAge) {
         this.userService = userService;
         this.cookieMaxAge = cookieMaxAge;
-        sessionMap = new HashMap<>();
+        sessionList = new ArrayList<>();
     }
 
     @Override
@@ -24,34 +24,43 @@ public class SecurityServiceBase implements SecurityService {
         User user = userService.authenticate(email, password);
 
         String token = UUID.randomUUID().toString();
-        Session session = new Session(user, cookieMaxAge);
-        sessionMap.put(token, session);
+        Session session = new Session(user, token, cookieMaxAge);
+        sessionList.add(session);
 
         return token;
     }
 
     @Override
     public void logout(String token) {
-        sessionMap.remove(token);
+        sessionList.removeIf(session -> session.getToken().equals(token));
     }
 
     @Override
     public boolean isLoggable(String token) {
-        Session session = sessionMap.get(token);
-        if (session == null) {
-            return false;
+        Iterator<Session> iterator = sessionList.iterator();
+        while (iterator.hasNext()) {
+            Session session = iterator.next();
+            if (session.getToken().equals(token)) {
+                if (session.isExpired()) {
+                    iterator.remove();
+                    return false;
+                }
+                return true;
+            }
         }
 
-        if (session.isExpired()) {
-            sessionMap.remove(token);
-            return false;
-        }
-
-        return true;
+        return false;
     }
+
 
     @Override
     public Session getCurrentSession(String token) {
-        return sessionMap.get(token);
+        for (Session session : sessionList) {
+            if (session.getToken().equals(token)) {
+                return session;
+            }
+        }
+
+        return null;
     }
 }
