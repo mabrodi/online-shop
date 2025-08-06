@@ -2,12 +2,11 @@ package org.dimchik.web.servlet.cart;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dimchik.context.Cart;
+import org.dimchik.entity.Cart;
 import org.dimchik.context.Session;
 import org.dimchik.entity.Product;
 import org.dimchik.entity.User;
 import org.dimchik.web.view.TemplateRenderer;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

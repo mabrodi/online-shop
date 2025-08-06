@@ -2,7 +2,7 @@ package org.dimchik.web.servlet.product;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dimchik.context.Cart;
+import org.dimchik.entity.Cart;
 import org.dimchik.context.Session;
 import org.dimchik.entity.Product;
 import org.dimchik.entity.User;

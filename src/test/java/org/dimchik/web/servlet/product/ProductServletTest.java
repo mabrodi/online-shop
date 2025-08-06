@@ -2,11 +2,10 @@ package org.dimchik.web.servlet.product;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.dimchik.context.Cart;
+import org.dimchik.entity.Cart;
 import org.dimchik.context.Session;
 import org.dimchik.entity.User;
 import org.dimchik.service.ProductService;
-import org.dimchik.service.SecurityService;
 import org.dimchik.web.view.TemplateRenderer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

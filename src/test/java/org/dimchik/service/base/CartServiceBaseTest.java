@@ -27,7 +27,7 @@ class CartServiceBaseTest {
     @BeforeEach
     void setUp() {
         cartService = new CartServiceBase(productService);
-        session = new Session(null, 3600);
+        session = new Session(null,  "12345", 3600);
     }
 
     @Test

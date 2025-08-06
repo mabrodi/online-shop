@@ -1,6 +1,4 @@
-package org.dimchik.context;
-
-import org.dimchik.entity.Product;
+package org.dimchik.entity;
 
 import java.util.ArrayList;
 import java.util.List;
